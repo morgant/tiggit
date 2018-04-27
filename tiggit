@@ -1,0 +1,133 @@
+#!/bin/bash
+
+# 
+# tiggit - Automatic mirroring of remote git repositories
+# 
+# CHANGE LOG:
+# 
+# v0.1   - 2018-04-27 - Morgan Aldridge <morgant@makkintosshu.com>
+#                       ...
+# LICENSE:
+# 
+# Copyright (c) 2018, Morgan T. Aldridge. All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without 
+# modification, are permitted provided that the following conditions are met:
+# 
+# - Redistributions of source code must retain the above copyright notice, this 
+#   list of conditions and the following disclaimer.
+# - Redistributions in binary form must reproduce the above copyright notice, 
+#   this list of conditions and the following disclaimer in the documentation 
+#   and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# 
+
+# info
+tool=$(basename "$0")
+version='0.1'
+copyright='(c) 2018 Morgan T. Aldridge'
+
+# global variables
+verbose=false
+
+# print usage instructions (help)
+function usage() {
+	echo "Usage: $tool [options]"
+	echo '  -h, --help      print these usage instructions'
+	echo '  -v, --verbose   verbose output'
+	echo '  -V, --version   print the version'
+}
+
+# print version info
+function version() {
+	echo "$tool v$version $copyright"
+}
+
+# see if any arguments were passed in
+if [ $# -gt 0 ]; then
+	# if so, step through them all and pre-process them (we do this so we can 
+	# support multiple options specified together, e.g.: -abc vs. -a -b -c),
+	# GNU-style long options with alternate style values, and for easier
+	# actual handling
+	argv=()
+	while [ $# -gt 0 ]; do
+		# is this an option (e.g. starts with a dash) or an argument?
+		if [ "${1:0:1}" = "-" ]; then
+			# is it a GNU-style long option (e.g. starts with a double-dash)?
+			if [ "${1:0:2}" = "--" ]; then
+				# push the option (everything before an equals) onto argv
+				argv=("${argv[@]}" "${1%%=*}")
+				
+				# is it the alternate "--long-opt=value" format? if so, make it
+				# "--long-opt value" format buy pushing the value (everything after the
+				# equals) on as a separate argument
+				case "$1" in *=*)
+					argv=("${argv[@]}" "${1##*=}") ;;
+				esac
+			# otherwise, is it multiple single options specified together?
+			elif [ ${#1} -gt 2 ]; then
+				tmp="$1"
+				# push each onto argv as single options
+				for (( i=1; i < ${#tmp}; i++ )); do
+					argv=("${argv[@]}" "-${tmp:$i:1}")
+				done
+			# otherwise, it must be a single option so just push it onto argv
+			else
+				argv=("${argv[@]}" "$1")
+			fi
+			shift
+		# arguments just get pushed onto argv in order too
+		else
+			argv=("${argv[@]}" "$1")
+			shift
+		fi
+	done
+	argc=${#argv[@]}
+		
+	# now that we've pre-processed the options, go through them all for real
+	for (( i=0; i<$argc; i++ )); do
+		# is this an option (e.g. starts with a dash) or an argument?
+		if [ "${argv[$i]:0:1}" = "-" ]; then
+			case "${argv[$i]}" in
+				# see if the user intended us to run in verbose mode
+				"-v" | "--verbose")
+					verbose=true
+					;;
+				# see if the user requested help
+				"-h" | "--help")
+					usage
+					exit
+					;;
+				# see if the user requested the version
+				"-V" | "--version")
+					version
+					exit
+					;;
+				# handle other options
+			
+				# unknown option
+				*)
+					echo "$tool: Unknown option '$1'!"
+					exit 1
+					;;
+			esac
+		# handle arguments
+		# else
+			# one would normally handle arguments here
+		fi
+	done
+else
+	echo "No options or arguments were specified!"$'\n'
+	usage
+	exit 1
+fi
