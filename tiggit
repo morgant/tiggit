@@ -51,12 +51,13 @@ function usage() {
 	echo "Usage: $tool [options] <command> [<args>]"
 	echo
 	echo 'Options:'
-	echo '  -h, --help          : print these usage instructions'
-	echo '  -v, --verbose       : verbose output'
-	echo '  -V, --version       : print the version'
+	echo '  -h, --help            : print these usage instructions'
+	echo '  -v, --verbose         : verbose output'
+	echo '  -V, --version         : print the version'
 	echo
 	echo 'Commands:'
-	echo '  mirror <repository> : mirror the specifed git repository'
+	echo '  mirror <repository>   : mirror the specifed git repository'
+	echo '  update [<repository>] : update all or just the specified git repository'
 }
 
 # print version info
@@ -110,33 +111,53 @@ function args_preprocess() {
 
 # build a mirror path from a repo name/URL
 function repo_mirror_path() {
-  local repo="$1"
-  local repo_name
+  local remote_repo="$1"
+  local repo
 
-  if [[ "${repo}" =~ ([^\/]+)\.git$ ]]; then
-    repo_name="${BASH_REMATCH[1]}"
-  elif [[ "${repo}" =~ ([^\/]+)$ ]]; then
-    repo_name="${BASH_REMATCH[1]}"
+  if [[ "${remote_repo}" =~ ([^\/]+)\.git$ ]]; then
+    repo="${BASH_REMATCH[1]}"
+  elif [[ "${remote_repo}" =~ ([^\/]+)$ ]]; then
+    repo="${BASH_REMATCH[1]}"
   fi
 
-  if [ -n "${repo_name}" ]; then
-    echo "${TIGGIT_MIRRORS_PATH}/${repo_name}.git"
+  if [ -n "${repo}" ]; then
+    echo "${TIGGIT_MIRRORS_PATH}/${repo}.git"
   fi
 }
 
 # create mirror of specified git repo
-function repo_create_mirror() {
-  local repo="$1"
-  local repo_path="$(repo_mirror_path "$repo")"
+function repo_mirror_create() {
+  local remote_repo="$1"
+  local repo_path="$(repo_mirror_path "$remote_repo")"
   
-  if $verbose; then echo -n "Mirroring '${repo}' to '${repo_path}'... "; fi
-  if git clone --mirror "$repo" "$repo_path"; then
+  if $verbose; then echo -n "Mirroring '${remote_repo}' to '${repo_path}'... "; fi
+  if git clone --mirror "$remote_repo" "$repo_path"; then
     if $verbose; then echo "Done."; fi
   else
     if $verbose; then echo "ERROR!"; fi
     exit 1
   fi
 }
+
+# fetch latest changes of specified git repo
+function repo_mirror_update() {
+  local repo="$1"
+  local repo_path="${TIGGIT_MIRRORS_PATH}/${repo}.git"
+
+  if $verbose; then echo -n "Updating '${repo}' in '${repo_path}'... "; fi
+  cd "${repo_path}"
+  if git remote update; then
+    if $verbose; then echo "Done."; fi
+  else
+    if $verbose; then echo "ERROR!"; fi
+  fi  
+  cd -
+}
+
+# fetch latest changes of all git repos
+#function repo_mirror_update_all() {
+#  
+#}
 
 function main() {
   # require at least one option or argument
@@ -179,7 +200,11 @@ function main() {
 			case "${argv[$i]}" in
 			  # commands
 			  "mirror")
-			    repo_create_mirror "${argv[$i+1]}"
+			    repo_mirror_create "${argv[$i+1]}"
+			    (( i++ ))
+			    ;;
+			  "update")
+			    repo_mirror_update "${argv[$i+1]}"
 			    (( i++ ))
 			    ;;
 			  # unknown command/argument
