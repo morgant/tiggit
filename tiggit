@@ -9,7 +9,7 @@
 #                       ...
 # LICENSE:
 # 
-# Copyright (c) 2018, Morgan T. Aldridge. All rights reserved.
+# Copyright (c) 2018-2019, Morgan T. Aldridge. All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without 
 # modification, are permitted provided that the following conditions are met:
@@ -35,7 +35,7 @@
 # info
 tool=$(basename "$0")
 version='0.1'
-copyright='(c) 2018 Morgan T. Aldridge'
+copyright='(c) 2018-2019 Morgan T. Aldridge'
 
 # environment variables
 TIGGIT_MIRRORS_PATH="${TIGGIT_MIRRORS_PATH:-/Library/GitMirrors}"
