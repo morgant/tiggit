@@ -40,19 +40,24 @@ copyright='(c) 2018-2019 Morgan T. Aldridge'
 # environment variables
 TIGGIT_MIRRORS_PATH="${TIGGIT_MIRRORS_PATH:-/Library/GitMirrors}"
 TIGGIT_CONFIG="${TIGGIT_CONFIG:-tiggit.conf}"
-TIGGIT_CONFIG_PATH="${TIGGIT_CONFIG:-/etc}"
+TIGGIT_CONFIG_PATH="${TIGGIT_CONFIG_PATH:-/etc}"
 TIGGIT_USER="${TIGGIT_USER:-_tiggit}"
 
 # global variables
 argv=()
 argc=0
 verbose=false
+daemon=false
+config_file="${TIGGIT_CONFIG_PATH}/${TIGGIT_CONFIG}"
+config_repos=()
 
 # print usage instructions (help)
 function usage() {
 	echo "Usage: $tool [options] <command> [<args>]"
 	echo
 	echo 'Options:'
+	echo '  -c, --config=<file>   : specify an alternate config file'
+	echo '  -d, --daemon          : run as a daemon, mirroring repositories from config file'
 	echo '  -h, --help            : print these usage instructions'
 	echo '  -v, --verbose         : verbose output'
 	echo '  -V, --version         : print the version'
@@ -197,6 +202,43 @@ function repo_mirror_update_all() {
   $success
 }
 
+# load repos to mirror from config file
+function config_load() {
+  local success=true
+
+  if $verbose; then echo -n "Reading git repositories to mirror from config file '${config_file}'... "; fi
+  if [ ! -f "${config_file}" ]; then
+    echo "ERROR! Config file '${config_file} not found!"
+    success=false
+  else
+    local line
+    while IFS= read -r line; do
+      # accept any line that's not blank or is a comment (starts with a hash/pound character)
+      if [[ "${line}" =~ ^([^#].+)$ ]]; then
+        config_repos+=("${BASH_REMATCH[1]}")
+      fi
+    done < "${config_file}"
+  fi
+  if $verbose; then echo "Done."; fi
+
+  $success
+}
+
+# run as a daemon, mirroring repositories from config file
+function daemonize() {
+  if ! $daemon; then
+    echo "ERROR! Not in daemon mode, so cannot daemonize! Exiting." 1>&2
+    exit 1
+  fi
+
+  if ! config_load; then
+    echo "ERROR! Could not load repositories from config file! Exiting." 1>&2
+    exit 1
+  fi
+
+  # TODO: create a runtime loop to update all repositories every N minutes (15?)
+}
+
 function main() {
   # require at least one option or argument
   if [ $argc -eq 0 ]; then
@@ -211,6 +253,15 @@ function main() {
 		# is this an option (e.g. starts with a dash) or an argument?
 		if [ "${argv[$i]:0:1}" = "-" ]; then
 			case "${argv[$i]}" in
+			  # see if the user is specifying a config file
+			  "-c" | "--config")
+			    config_file="${argv[$i+1]}"
+			    (( i++ ))
+			    ;;
+			  # see if the user intended us to run as a daemon
+			  "-d" | "--daemon")
+			    daemon=true
+			    ;;
 				# see if the user intended us to run in verbose mode
 				"-v" | "--verbose")
 					verbose=true
@@ -229,7 +280,7 @@ function main() {
 			
 				# unknown option
 				*)
-					echo "$tool: Unknown option '$1'!"
+					echo "$tool: Unknown option '${argv[$i]}''!"
 					exit 1
 					;;
 			esac
@@ -239,7 +290,6 @@ function main() {
 			  # commands
 			  "list")
 			    repo_mirrors_list
-			    (( i++ ))
 			    ;;
 			  "mirror")
 			    repo_mirror_create "${argv[$i+1]}"
@@ -255,12 +305,14 @@ function main() {
 			    ;;
 			  # unknown command/argument
 				*)
-					echo "$tool: Unknown command '$1'!"
+				  echo "$tool: Unknown command '${argv[$i]}'!"
 					exit 1
 					;;
 			esac
 		fi
 	done
+
+	if $daemon; then daemonize; fi
 }
 
 args_preprocess "$@"
