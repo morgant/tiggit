@@ -37,15 +37,26 @@ tool=$(basename "$0")
 version='0.1'
 copyright='(c) 2018 Morgan T. Aldridge'
 
+# environment variables
+TIGGIT_MIRRORS_PATH="${TIGGIT_MIRRORS_PATH:-/Library/GitMirrors}"
+TIGGIT_USER="${TIGGIT_USER:-_tiggit}"
+
 # global variables
+argv=()
+argc=0
 verbose=false
 
 # print usage instructions (help)
 function usage() {
-	echo "Usage: $tool [options]"
-	echo '  -h, --help      print these usage instructions'
-	echo '  -v, --verbose   verbose output'
-	echo '  -V, --version   print the version'
+	echo "Usage: $tool [options] <command> [<args>]"
+	echo
+	echo 'Options:'
+	echo '  -h, --help          : print these usage instructions'
+	echo '  -v, --verbose       : verbose output'
+	echo '  -V, --version       : print the version'
+	echo
+	echo 'Commands:'
+	echo '  mirror <repository> : mirror the specifed git repository'
 }
 
 # print version info
@@ -53,13 +64,15 @@ function version() {
 	echo "$tool v$version $copyright"
 }
 
-# see if any arguments were passed in
-if [ $# -gt 0 ]; then
-	# if so, step through them all and pre-process them (we do this so we can 
+# preprocess arguments and convert combined & long options to individual options
+function args_preprocess() {
+  # do nothing if we have no arguments to process
+  if [ $# -eq 0 ]; then return 0; fi
+  
+	# step through all arguments and pre-process them (we do this so we can 
 	# support multiple options specified together, e.g.: -abc vs. -a -b -c),
 	# GNU-style long options with alternate style values, and for easier
 	# actual handling
-	argv=()
 	while [ $# -gt 0 ]; do
 		# is this an option (e.g. starts with a dash) or an argument?
 		if [ "${1:0:1}" = "-" ]; then
@@ -93,8 +106,37 @@ if [ $# -gt 0 ]; then
 		fi
 	done
 	argc=${#argv[@]}
-		
-	# now that we've pre-processed the options, go through them all for real
+}
+
+# build a mirror path from a repo name/URL
+#function repo_mirror_path() {
+  # TODO: implement!
+#}
+
+# create mirror of specified git repo
+function repo_create_mirror() {
+  local repo="$1"
+  local repo_path="$(repo_mirror_path "$repo")"
+  
+  if $verbose; then echo -n "Mirroring '${repo}' to '${repo_path}'... "; fi
+  if git --mirror "$repo" "$repo_path"; then
+    if $verbose; then echo "Done."; fi
+  else
+    if $verbose; then echo "ERROR!"; fi
+    exit 1
+  fi
+}
+
+function main() {
+  # require at least one option or argument
+  if [ $argc -eq 0 ]; then
+  	echo "No options or arguments were specified!"$'\n'
+  	usage
+  	exit 1
+  fi
+  
+	# handle arguments
+	local command repository
 	for (( i=0; i<$argc; i++ )); do
 		# is this an option (e.g. starts with a dash) or an argument?
 		if [ "${argv[$i]:0:1}" = "-" ]; then
@@ -122,12 +164,22 @@ if [ $# -gt 0 ]; then
 					;;
 			esac
 		# handle arguments
-		# else
-			# one would normally handle arguments here
+		else
+			case "${argv[$i]}" in
+			  # commands
+			  "mirror")
+			    repo_create_mirror "${argv[$i+1]}"
+			    (( i++ ))
+			    ;;
+			  # unknown command/argument
+				*)
+					echo "$tool: Unknown command '$1'!"
+					exit 1
+					;;
+			esac
 		fi
 	done
-else
-	echo "No options or arguments were specified!"$'\n'
-	usage
-	exit 1
-fi
+}
+
+args_preprocess "$@"
+main
