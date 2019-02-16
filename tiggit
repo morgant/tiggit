@@ -109,9 +109,20 @@ function args_preprocess() {
 }
 
 # build a mirror path from a repo name/URL
-#function repo_mirror_path() {
-  # TODO: implement!
-#}
+function repo_mirror_path() {
+  local repo="$1"
+  local repo_name
+
+  if [[ "${repo}" =~ ([^\/]+)\.git$ ]]; then
+    repo_name="${BASH_REMATCH[1]}"
+  elif [[ "${repo}" =~ ([^\/]+)$ ]]; then
+    repo_name="${BASH_REMATCH[1]}"
+  fi
+
+  if [ -n "${repo_name}" ]; then
+    echo "${TIGGIT_MIRRORS_PATH}/${repo_name}.git"
+  fi
+}
 
 # create mirror of specified git repo
 function repo_create_mirror() {
@@ -119,7 +130,7 @@ function repo_create_mirror() {
   local repo_path="$(repo_mirror_path "$repo")"
   
   if $verbose; then echo -n "Mirroring '${repo}' to '${repo_path}'... "; fi
-  if git --mirror "$repo" "$repo_path"; then
+  if git clone --mirror "$repo" "$repo_path"; then
     if $verbose; then echo "Done."; fi
   else
     if $verbose; then echo "ERROR!"; fi
