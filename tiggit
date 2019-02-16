@@ -180,9 +180,22 @@ function repo_mirrors_list() {
 }
 
 # fetch latest changes of all git repos
-#function repo_mirror_update_all() {
-#  
-#}
+function repo_mirror_update_all() {
+  local success=true
+
+  if $verbose; then echo -n "Updating all repositories in '${TIGGIT_MIRRORS_PATH}'... "; fi
+  while IFS= read -r line; do
+    repo_mirror_update "$line"
+    if [ $? -gt 0 ]; then success=false; fi
+  done <<< "$(repo_mirrors_list)"
+  if $success; then
+    if $verbose; then echo "Done."; fi
+  else
+    if $verbose; then echo "Done."; fi
+  fi
+
+  $success
+}
 
 function main() {
   # require at least one option or argument
@@ -233,7 +246,11 @@ function main() {
 			    (( i++ ))
 			    ;;
 			  "update")
-			    repo_mirror_update "${argv[$i+1]}"
+			    if [ "${argv[$i+1]}" = "all" ]; then
+			      repo_mirror_update_all
+			    else
+            repo_mirror_update "${argv[$i+1]}"
+          fi
 			    (( i++ ))
 			    ;;
 			  # unknown command/argument
