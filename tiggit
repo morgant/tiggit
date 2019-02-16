@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # 
 # tiggit - Automatic mirroring of remote git repositories
@@ -39,6 +39,8 @@ copyright='(c) 2018-2019 Morgan T. Aldridge'
 
 # environment variables
 TIGGIT_MIRRORS_PATH="${TIGGIT_MIRRORS_PATH:-/Library/GitMirrors}"
+TIGGIT_CONFIG="${TIGGIT_CONFIG:-tiggit.conf}"
+TIGGIT_CONFIG_PATH="${TIGGIT_CONFIG:-/etc}"
 TIGGIT_USER="${TIGGIT_USER:-_tiggit}"
 
 # global variables
@@ -59,6 +61,11 @@ function usage() {
 	echo '  list                  : list all mirrored git repositories'
 	echo '  mirror <repository>   : mirror the specifed git repository'
 	echo '  update [<repository>] : update all or just the specified git repository'
+	echo
+	echo 'Environment Variables:'
+	echo '  TIGGIT_CONFIG         : name of config file (default: tiggit.conf)'
+	echo '  TIGGIT_CONFIG_PATH    : path to configuration file (default: /etc)'
+	echo '  TIGGIT_MIRROR_PATH    : path to mirrored repositories (default: /Library/GitMirrors)'
 }
 
 # print version info
