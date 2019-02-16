@@ -56,6 +56,7 @@ function usage() {
 	echo '  -V, --version         : print the version'
 	echo
 	echo 'Commands:'
+	echo '  list                  : list all mirrored git repositories'
 	echo '  mirror <repository>   : mirror the specifed git repository'
 	echo '  update [<repository>] : update all or just the specified git repository'
 }
@@ -151,7 +152,16 @@ function repo_mirror_update() {
   else
     if $verbose; then echo "ERROR!"; fi
   fi  
-  cd -
+  cd - > /dev/null
+}
+
+# return list of all the git repos mirrored
+function repo_mirrors_list() {
+  while IFS= read -r line; do
+    if [[ "$(basename "${line}")" =~ ^(.+)\.git$ ]]; then
+      echo "${BASH_REMATCH[1]}"
+    fi
+  done <<< "$(find "${TIGGIT_MIRRORS_PATH}" -name "*.git" -mindepth 1 -maxdepth 1)"
 }
 
 # fetch latest changes of all git repos
@@ -199,6 +209,10 @@ function main() {
 		else
 			case "${argv[$i]}" in
 			  # commands
+			  "list")
+			    repo_mirrors_list
+			    (( i++ ))
+			    ;;
 			  "mirror")
 			    repo_mirror_create "${argv[$i+1]}"
 			    (( i++ ))
