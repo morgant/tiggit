@@ -51,6 +51,20 @@ daemon=false
 config_file="${TIGGIT_CONFIG_PATH}/${TIGGIT_CONFIG}"
 config_repos=()
 
+function in_array() {
+	local found=false
+	local value="$1"
+	shift
+
+	if [ -z "$value" ]; then $found; fi
+	if [ ${#@} -lt 1 ]; then $found; fi
+	for array_value in "$@"; do
+		if [ "$value" = "$array_value" ]; then found=true; fi
+	done
+
+	$found
+}
+
 # print usage instructions (help)
 function usage() {
 	echo "Usage: $tool [options] <command> [<args>]"
@@ -138,10 +152,21 @@ function repo_mirror_path() {
   fi
 }
 
+# determine if a repo is already mirrored
+function is_repo_mirrored() {
+  local success=false
+  local remote_repo="$1"
+  local repo_path="$(repo_mirror_path "${remote_repo}")"
+
+  if [ -d "${repo_path}" ] && [ "$(git -C "${repo_path}" remote get-url origin)" = "${remote_repo}" ]; then success=true; fi
+
+  $success
+}
+
 # create mirror of specified git repo
 function repo_mirror_create() {
   local remote_repo="$1"
-  local repo_path="$(repo_mirror_path "$remote_repo")"
+  local repo_path="$(repo_mirror_path "${remote_repo}")"
 
   local git_cmd=("git" "clone")
   if ! $verbose; then git_cmd+=("-q"); fi
@@ -235,6 +260,22 @@ function daemonize() {
     echo "ERROR! Could not load repositories from config file! Exiting." 1>&2
     exit 1
   fi
+
+  # mirror all the git repos
+  if $verbose; then echo "Mirroring all repositories... "; fi
+  for repo in "${config_repos[@]}"; do
+    if $verbose; then echo -n "  ${repo} ... "; fi
+    if is_repo_mirrored "${repo}"; then
+      if $verbose; then echo "Mirrored"; fi
+    elif repo_mirror_create "${repo}"; then
+      if $verbose; then echo "Mirrored"; fi
+    else
+      echo "ERROR!"
+    fi
+  done
+  if $verbose; then echo "Done."; fi
+
+  
 
   # TODO: create a runtime loop to update all repositories every N minutes (15?)
 }
