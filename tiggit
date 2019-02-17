@@ -38,9 +38,10 @@ version='0.1'
 copyright='(c) 2018-2019 Morgan T. Aldridge'
 
 # environment variables
-TIGGIT_MIRRORS_PATH="${TIGGIT_MIRRORS_PATH:-/Library/GitMirrors}"
 TIGGIT_CONFIG="${TIGGIT_CONFIG:-tiggit.conf}"
 TIGGIT_CONFIG_PATH="${TIGGIT_CONFIG_PATH:-/etc}"
+TIGGIT_MIRRORS_PATH="${TIGGIT_MIRRORS_PATH:-/Library/GitMirrors}"
+TIGGIT_UPDATE_INTERVAL="${TIGGIT_UPDATE_INTERVAL:-900}"
 TIGGIT_USER="${TIGGIT_USER:-_tiggit}"
 
 # global variables
@@ -85,6 +86,7 @@ function usage() {
 	echo '  TIGGIT_CONFIG         : name of config file (default: tiggit.conf)'
 	echo '  TIGGIT_CONFIG_PATH    : path to configuration file (default: /etc)'
 	echo '  TIGGIT_MIRROR_PATH    : path to mirrored repositories (default: /Library/GitMirrors)'
+	echo '  TIGGIT_UPDATE_INTERVAL: seconds between fetching updates to repositories (seconds; default: 900)'
 }
 
 # print version info
@@ -275,9 +277,28 @@ function daemonize() {
   done
   if $verbose; then echo "Done."; fi
 
-  
+  # configure traps
+  trap 'config_load' HUP
 
-  # TODO: create a runtime loop to update all repositories every N minutes (15?)
+  # daemon runtime loop
+  local start_time
+  local sleep_time
+  while true; do
+    start_time="$(date +%s)"
+
+    # update all the repositories
+    if $verbose; then echo "Updating all repositories... "; fi
+    if repo_mirror_update_all; then
+      if $verbose; then echo "Done."; fi
+    else
+      if $verbose; then echo "ERROR!"; fi
+    fi
+
+    # wait the remainder of the interval
+    sleep_time="$(( ${TIGGIT_UPDATE_INTERVAL} - ( $(date +%s) - ${start_time} ) ))"
+    if $verbose; then echo "Sleeping ${sleep_time} seconds..."; fi
+    sleep "${sleep_time}"
+  done
 }
 
 function main() {
