@@ -47,6 +47,7 @@ TIGGIT_USER="${TIGGIT_USER:-_tiggit}"
 # global variables
 argv=()
 argc=0
+indent_level=0
 verbose=false
 daemon=false
 config_file="${TIGGIT_CONFIG_PATH}/${TIGGIT_CONFIG}"
@@ -64,6 +65,21 @@ function in_array() {
 	done
 
 	$found
+}
+
+function indent() {
+  (( indent_level++ ))
+
+  local line
+  while IFS= read -r line; do
+    for (( i=0; i<$indent_level; i++ )); do
+      echo -n "  "
+    done
+    echo "${line}"
+  done <<< "$($@)"
+
+  (( indent_level-- ))
+  return $?
 }
 
 # print usage instructions (help)
@@ -170,11 +186,11 @@ function repo_mirror_create() {
   local remote_repo="$1"
   local repo_path="$(repo_mirror_path "${remote_repo}")"
 
-  local git_cmd=("git" "clone")
+  local git_cmd=("indent" "git" "clone")
   if ! $verbose; then git_cmd+=("-q"); fi
   git_cmd+=("--mirror" "${remote_repo}" "${repo_path}")
 
-  if $verbose; then echo -n "Mirroring '${remote_repo}' to '${repo_path}'... "; fi
+  if $verbose; then echo "Mirroring '${remote_repo}' to '${repo_path}'..."; fi
   if "${git_cmd[@]}"; then
     if $verbose; then echo "Done."; fi
   else
@@ -187,11 +203,11 @@ function repo_mirror_create() {
 function repo_mirror_update() {
   local repo="$1"
   local repo_path="${TIGGIT_MIRRORS_PATH}/${repo}.git"
-  local git_cmd=("git" "-C" "${repo_path}" "remote" "update")
+  local git_cmd=("indent" "git" "-C" "${repo_path}" "remote" "update")
 
-  if $verbose; then echo -n "Updating '${repo}' in '${repo_path}'... "; fi
+  if $verbose; then echo "Updating '${repo}' in '${repo_path}'..."; fi
   if ! $verbose; then
-    "${git_cmd[@]}" > /dev/null
+    "${git_cmd[@]}" >/dev/null
   else
     "${git_cmd[@]}"
   fi
@@ -215,9 +231,9 @@ function repo_mirrors_list() {
 function repo_mirror_update_all() {
   local success=true
 
-  if $verbose; then echo -n "Updating all repositories in '${TIGGIT_MIRRORS_PATH}'... "; fi
+  if $verbose; then echo "Updating all repositories in '${TIGGIT_MIRRORS_PATH}'..."; fi
   while IFS= read -r line; do
-    repo_mirror_update "$line"
+    indent repo_mirror_update "$line"
     if [ $? -gt 0 ]; then success=false; fi
   done <<< "$(repo_mirrors_list)"
   if $success; then
@@ -269,7 +285,7 @@ function daemonize() {
     if $verbose; then echo -n "  ${repo} ... "; fi
     if is_repo_mirrored "${repo}"; then
       if $verbose; then echo "Mirrored"; fi
-    elif repo_mirror_create "${repo}"; then
+    elif indent repo_mirror_create "${repo}"; then
       if $verbose; then echo "Mirrored"; fi
     else
       echo "ERROR!"
@@ -287,12 +303,7 @@ function daemonize() {
     start_time="$(date +%s)"
 
     # update all the repositories
-    if $verbose; then echo "Updating all repositories... "; fi
-    if repo_mirror_update_all; then
-      if $verbose; then echo "Done."; fi
-    else
-      if $verbose; then echo "ERROR!"; fi
-    fi
+    repo_mirror_update_all
 
     # wait the remainder of the interval
     sleep_time="$(( ${TIGGIT_UPDATE_INTERVAL} - ( $(date +%s) - ${start_time} ) ))"
