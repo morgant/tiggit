@@ -12,6 +12,8 @@
       <string>--verbose</string>
       <string>--daemon</string>
     </array>
+    <key>UserName</key>
+    <string>_tiggit</string>
     <key>KeepAlive</key>
     <true/>
     <key>ProcessType</key>
