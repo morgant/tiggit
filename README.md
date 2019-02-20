@@ -13,7 +13,7 @@ Installation is performed as follows:
 
     sudo make install
 
-_Note: Installation currently only supports creating the `_tiggit` daemon user on macOS (née OS X), but I'm happy to add support for additional operating systems.
+_Note: Installation currently only supports creating the `_tiggit` daemon user on macOS (née OS X), but I'm happy to add support for additional operating systems._
 
 If you intend to mirror private repositories, you will have to ensure that SSH keys are configured correctly. If you will be mirroring private repositories with `tiggit` running as a daemon, then the SSH keys will need to be configured for the the `_tiggit` user (in macOS, keys should exist in `/Library/WebServer/.ssh`).
 
