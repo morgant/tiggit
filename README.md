@@ -51,7 +51,13 @@ Or, stop it:
 
 ## ENVIRONMENT VARIABLES
 
+`TIGGIT_CONFIG`: name of config file (default: `tiggit.conf`)
 
+`TIGGIT_CONFIG_PATH`: path to configuration file (default: `/etc`)
+
+`TIGGIT_MIRROR_PATH`: path to mirrored repositories (default: `/Library/GitMirrors`)
+
+`TIGGIT_UPDATE_INTERVAL`: seconds between fetching updates to repositories (seconds; default: `900` [seconds] or 15 minutes)
 
 ## ACKNOWLEDGEMENTS
 
