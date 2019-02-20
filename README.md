@@ -1,4 +1,4 @@
-![tiger](docs/tiger.svg) ![git](docs/git-logo.svg)
+![tiger](docs/tiger.svg)
 
 # tig|git
 by Morgan Aldridge <morgant@makkintosshu.com>
