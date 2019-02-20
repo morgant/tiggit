@@ -5,7 +5,7 @@ by Morgan Aldridge <morgant@makkintosshu.com>
 
 ## OVERVIEW
 
-`tiggit` provides simple, automatic mirroring of remote git repositories for backup purposes.
+`tiggit` provides simple, automatic mirroring of remote git repositories for backup purposes. Not to be confused with [gittig](https://github.com/tuler/gittig).
 
 
 ## ACKNOWLEDGEMENTS
