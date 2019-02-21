@@ -15,7 +15,9 @@ _tiggit:
 	dscl . -create /Users/$(user) Password \*
 
 install: tiggit Library/LaunchDaemons/com.makkintosshu.tiggit.plist _tiggit
+	mkdir -p $(prefix)/bin
 	install -m755 tiggit $(prefix)/bin
 	install -m644 etc/tiggit.conf.default /etc/tiggit.conf
 	install Library/LaunchDaemons/com.makkintosshu.tiggit.plist /Library/LaunchDaemons
 	mkdir -p /Library/GitMirrors
+	chown -R _tiggit /Library/GitMirrors
