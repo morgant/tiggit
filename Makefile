@@ -20,7 +20,7 @@ user:
 
 install: tiggit user
 	mkdir -p $(PREFIX)/bin
-	install -m755 tiggit $(PREFIX)/bin
+	install -m755 bin/tiggit $(PREFIX)/bin
 	install -m644 etc/tiggit.conf.default /etc
 	mkdir -p /Library/GitMirrors
 	chown -R _tiggit /Library/GitMirrors
