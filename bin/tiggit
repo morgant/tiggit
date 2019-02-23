@@ -101,7 +101,7 @@ function usage() {
 	echo 'Environment Variables:'
 	echo '  TIGGIT_CONFIG         : name of config file (default: tiggit.conf)'
 	echo '  TIGGIT_CONFIG_PATH    : path to configuration file (default: /etc)'
-	echo '  TIGGIT_MIRROR_PATH    : path to mirrored repositories (default: /Library/GitMirrors)'
+	echo '  TIGGIT_MIRRORS_PATH    : path to mirrored repositories (default: /Library/GitMirrors)'
 	echo '  TIGGIT_UPDATE_INTERVAL: seconds between fetching updates to repositories (seconds; default: 900)'
 }
 
