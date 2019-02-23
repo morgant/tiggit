@@ -18,7 +18,7 @@ user:
 	dscl . -create /Users/$(USER) PrimaryGroupID $(GID)
 	dscl . -create /Users/$(USER) Password \*
 
-install: tiggit user
+install: bin/tiggit user
 	mkdir -p $(PREFIX)/bin
 	install -m755 bin/tiggit $(PREFIX)/bin
 	install -m644 etc/tiggit.conf.default /etc
