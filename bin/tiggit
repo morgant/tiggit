@@ -275,6 +275,13 @@ function config_load() {
           if [ "${group}" != "${BASH_REMATCH[1]}" ]; then
             group="${BASH_REMATCH[1]}"
           fi
+        elif [ "${group}" = "auto" ]; then
+          local auto_group=""
+          if [[ "${line}" =~ github\.com[:/](.+)/.+\.git$ ]]; then
+            auto_group="${BASH_REMATCH[1]}"
+          fi
+          if $verbose; then indent echo "[${auto_group}] ${line}"; fi
+          config_repos+=("${auto_group}::${line}")
         else
           if $verbose; then indent echo "[${group}] ${line}"; fi
           config_repos+=("${group}::${line}")
