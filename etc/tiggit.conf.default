@@ -1,3 +1,4 @@
 # This is a comment. Only full line comments are supported.
 # Specify one git repository URL per line:
-git@github.com:morgant/tiggit.git
+[morgant]
+https://github.com/morgant/tiggit.git
