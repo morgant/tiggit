@@ -31,7 +31,7 @@ If you intend to mirror private repositories, you will have to ensure that SSH k
 
 ### Daemon
 
-In daemon mode, `tiggit` will read the list of repositories it should mirror and keep updated from `/etc/tiggit.conf` (one per line). After the initial mirroring of any repositories it's not already mirroring, it will fetch updates every 15 minutes.
+In daemon mode, `tiggit` will read the list of repositories it should mirror and keep updated from `/etc/tiggit.conf` (see [CONFIGURATION](#CONFIGURATION) for further details). After the initial mirroring of any repositories it's not already mirroring, it will fetch updates every 15 minutes.
 
 One can manually run it as a daemon as follows:
 
@@ -48,6 +48,34 @@ Alternatively, on macOS, `tiggit` will be automatically run via `launchd`. You c
 Or, stop it:
 
     sudo launchctl unload /Library/LaunchDaemons/com.makkintosshu.tiggit.plist
+
+## CONFIGURATION
+
+When run in daemon mode, `tiggit` will read repos to mirror & update from `/etc/tiggit.conf`. The configuration file format supports comments, groups, and repository URLs.
+
+### Comments
+
+Comments are lines that begin with a hash/pound symbol (`#`):
+
+    # This is a comment
+
+_Important:_ Currently, only full-line comments are supported.
+
+### Groups
+
+Groups namespace repositories to prevent conflicts, but also for organization, specified by wrapping the group name in square brackets:
+
+    [group]
+
+A special `auto` group exists which will automatically group repositories by username parsed from the URI. Currently, only GitHub URIs are supported, but others can easily be added.
+
+### Repository URIs
+
+Each non-comment line following a group should be a repository URI to be mirrored:
+
+    https://github.com/morgant/tiggit.git
+
+Currently, HTTPS & SSH URIs are supported.
 
 ## ENVIRONMENT VARIABLES
 
