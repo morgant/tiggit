@@ -157,6 +157,7 @@ function args_preprocess() {
 # build a mirror path from a repo name/URL
 function repo_mirror_path() {
   local remote_repo="$1"
+  local group="$2"
   local repo
 
   if [[ "${remote_repo}" =~ ([^\/]+)\.git$ ]]; then
@@ -166,7 +167,7 @@ function repo_mirror_path() {
   fi
 
   if [ -n "${repo}" ]; then
-    echo "${TIGGIT_MIRRORS_PATH}/${repo}.git"
+    echo "${TIGGIT_MIRRORS_PATH}/${group}/${repo}.git"
   fi
 }
 
@@ -174,7 +175,8 @@ function repo_mirror_path() {
 function is_repo_mirrored() {
   local success=false
   local remote_repo="$1"
-  local repo_path="$(repo_mirror_path "${remote_repo}")"
+  local group="$2"
+  local repo_path="$(repo_mirror_path "${remote_repo}" "${group}")"
 
   if [ -d "${repo_path}" ] && [ "$(git -C "${repo_path}" remote get-url origin)" = "${remote_repo}" ]; then success=true; fi
 
@@ -184,7 +186,8 @@ function is_repo_mirrored() {
 # create mirror of specified git repo
 function repo_mirror_create() {
   local remote_repo="$1"
-  local repo_path="$(repo_mirror_path "${remote_repo}")"
+  local group="$2"
+  local repo_path="$(repo_mirror_path "${remote_repo}" "${group}")"
 
   local git_cmd=("indent" "git" "clone")
   if ! $verbose; then git_cmd+=("-q"); fi
@@ -225,6 +228,14 @@ function repo_mirrors_list() {
       echo "${BASH_REMATCH[1]}"
     fi
   done <<< "$(find "${TIGGIT_MIRRORS_PATH}" -name "*.git" -mindepth 1 -maxdepth 1)"
+
+  local group=""
+  while IFS= read -r line; do
+    if [[ "$(basename "${line}")" =~ ^(.+)\.git$ ]]; then
+      group="$(basename "$(dirname "$line")")"
+      echo "${group}/${BASH_REMATCH[1]}"
+    fi
+  done <<< "$(find "${TIGGIT_MIRRORS_PATH}" -name "*.git" -mindepth 2 -maxdepth 2)"
 }
 
 # fetch latest changes of all git repos
@@ -249,16 +260,25 @@ function repo_mirror_update_all() {
 function config_load() {
   local success=true
 
-  if $verbose; then echo -n "Reading git repositories to mirror from config file '${config_file}'... "; fi
+  if $verbose; then echo "Reading git repositories to mirror from config file '${config_file}'... "; fi
   if [ ! -f "${config_file}" ]; then
     echo "ERROR! Config file '${config_file} not found!"
     success=false
   else
     local line
+    local group=""
     while IFS= read -r line; do
       # accept any line that's not blank or is a comment (starts with a hash/pound character)
       if [[ "${line}" =~ ^([^#].+)$ ]]; then
-        config_repos+=("${BASH_REMATCH[1]}")
+        # handle group/namespace directives
+        if [[ "${line}" =~ ^\[(.+)\]$ ]]; then
+          if [ "${group}" != "${BASH_REMATCH[1]}" ]; then
+            group="${BASH_REMATCH[1]}"
+          fi
+        else
+          if $verbose; then indent echo "[${group}] ${line}"; fi
+          config_repos+=("${group}::${line}")
+        fi
       fi
     done < "${config_file}"
   fi
@@ -281,11 +301,16 @@ function daemonize() {
 
   # mirror all the git repos
   if $verbose; then echo "Mirroring all repositories... "; fi
+  local group=""
   for repo in "${config_repos[@]}"; do
-    if $verbose; then echo -n "  ${repo} ... "; fi
-    if is_repo_mirrored "${repo}"; then
+    if [[ "$repo" =~ ^(.*)::(.+)$ ]]; then
+      group="${BASH_REMATCH[1]}"
+      repo="${BASH_REMATCH[2]}"
+    fi
+    if $verbose; then echo -n "  [${group}] ${repo} ... "; fi
+    if is_repo_mirrored "${repo}" "${group}"; then
       if $verbose; then echo "Mirrored"; fi
-    elif indent repo_mirror_create "${repo}"; then
+    elif indent repo_mirror_create "${repo}" "${group}"; then
       if $verbose; then echo "Mirrored"; fi
     else
       echo "ERROR!"
