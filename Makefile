@@ -2,7 +2,7 @@ prefix = /usr/local
 
 user = _tiggit
 uid = $(shell dscl . -list /Users UniqueID | awk '$$2<500 {print $$2}' | sort -rn | head -n 1)	# based on ideas from https://stackoverflow.com/questions/9028383/find-the-highest-user-id-in-mac-os-x & https://stackoverflow.com/questions/32810960/create-user-for-running-a-daemon-on-macos-x
-gid = $(shell gid -g daemon)
+gid = $(shell id -g daemon)
 
 _tiggit:
 	# create the user
@@ -21,3 +21,5 @@ install: tiggit Library/LaunchDaemons/com.makkintosshu.tiggit.plist _tiggit
 	install Library/LaunchDaemons/com.makkintosshu.tiggit.plist /Library/LaunchDaemons
 	mkdir -p /Library/GitMirrors
 	chown -R _tiggit /Library/GitMirrors
+	touch /var/log/tiggit.log
+	chown _tiggit /var/log/tiggit.log
