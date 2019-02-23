@@ -3,6 +3,8 @@
 # tig|git
 by Morgan Aldridge <morgant@makkintosshu.com>
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=DBY3R8ARLDELE&currency_code=USD&source=url)
+
 ## OVERVIEW
 
 `tiggit` provides simple, automatic mirroring of remote git repositories for backup purposes. Not to be confused with [gittig](https://github.com/tuler/gittig).
