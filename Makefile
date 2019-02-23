@@ -1,9 +1,13 @@
 PREFIX = /usr/local
 
+OS = $(shell uname -s)
+
 USER = _tiggit
 GROUP = daemon
-UID = $(shell expr "$$(dscl . -list /Users UniqueID | awk '$$2<500 {print $$2}' | sort -rn | head -n 1)" + 1)	# based on ideas from https://stackoverflow.com/questions/9028383/find-the-highest-user-id-in-mac-os-x & https://stackoverflow.com/questions/32810960/create-user-for-running-a-daemon-on-macos-x
-GID = $(shell id -g $(GROUP))
+ifeq ($(OS),Darwin)
+	UID = $(shell expr "$$(dscl . -list /Users UniqueID | awk '$$2<500 {print $$2}' | sort -rn | head -n 1)" + 1)	# based on ideas from https://stackoverflow.com/questions/9028383/find-the-highest-user-id-in-mac-os-x & https://stackoverflow.com/questions/32810960/create-user-for-running-a-daemon-on-macos-x
+	GID = $(shell id -g $(GROUP))
+endif
 
 user:
 	dscl . -create /Users/$(USER)
@@ -18,8 +22,10 @@ install: tiggit user
 	mkdir -p $(PREFIX)/bin
 	install -m755 tiggit $(PREFIX)/bin
 	install -m644 etc/tiggit.conf.default /etc
-	install Library/LaunchDaemons/com.makkintosshu.tiggit.plist /Library/LaunchDaemons
 	mkdir -p /Library/GitMirrors
 	chown -R _tiggit /Library/GitMirrors
 	touch /var/log/tiggit.log
 	chown _tiggit /var/log/tiggit.log
+ifeq ($(OS),Darwin)
+	install Library/LaunchDaemons/com.makkintosshu.tiggit.plist /Library/LaunchDaemons
+endif
