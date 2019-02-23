@@ -1,8 +1,9 @@
 PREFIX = /usr/local
 
 USER = _tiggit
-UID = $(shell dscl . -list /Users UniqueID | awk '$$2<500 {print $$2}' | sort -rn | head -n 1)	# based on ideas from https://stackoverflow.com/questions/9028383/find-the-highest-user-id-in-mac-os-x & https://stackoverflow.com/questions/32810960/create-user-for-running-a-daemon-on-macos-x
-GID = $(shell id -g daemon)
+GROUP = daemon
+UID = $(shell expr "$$(dscl . -list /Users UniqueID | awk '$$2<500 {print $$2}' | sort -rn | head -n 1)" + 1)	# based on ideas from https://stackoverflow.com/questions/9028383/find-the-highest-user-id-in-mac-os-x & https://stackoverflow.com/questions/32810960/create-user-for-running-a-daemon-on-macos-x
+GID = $(shell id -g $(GROUP))
 
 user:
 	dscl . -create /Users/$(USER)
