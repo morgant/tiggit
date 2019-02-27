@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='content-type' value='text/html;charset=utf8'>
+  <meta name='generator' value='Ronn/v0.7.3 (http://github.com/rtomayko/ronn/tree/0.7.3)'>
+  <title>tiggit-conf(5) - tiggit daemon configuration file</title>
+  <style type='text/css' media='all'>
+  /* style: man */
+  body#manpage {margin:0}
+  .mp {max-width:100ex;padding:0 9ex 1ex 4ex}
+  .mp p,.mp pre,.mp ul,.mp ol,.mp dl {margin:0 0 20px 0}
+  .mp h2 {margin:10px 0 0 0}
+  .mp > p,.mp > pre,.mp > ul,.mp > ol,.mp > dl {margin-left:8ex}
+  .mp h3 {margin:0 0 0 4ex}
+  .mp dt {margin:0;clear:left}
+  .mp dt.flush {float:left;width:8ex}
+  .mp dd {margin:0 0 0 9ex}
+  .mp h1,.mp h2,.mp h3,.mp h4 {clear:left}
+  .mp pre {margin-bottom:20px}
+  .mp pre+h2,.mp pre+h3 {margin-top:22px}
+  .mp h2+pre,.mp h3+pre {margin-top:5px}
+  .mp img {display:block;margin:auto}
+  .mp h1.man-title {display:none}
+  .mp,.mp code,.mp pre,.mp tt,.mp kbd,.mp samp,.mp h3,.mp h4 {font-family:monospace;font-size:14px;line-height:1.42857142857143}
+  .mp h2 {font-size:16px;line-height:1.25}
+  .mp h1 {font-size:20px;line-height:2}
+  .mp {text-align:justify;background:#fff}
+  .mp,.mp code,.mp pre,.mp pre code,.mp tt,.mp kbd,.mp samp {color:#131211}
+  .mp h1,.mp h2,.mp h3,.mp h4 {color:#030201}
+  .mp u {text-decoration:underline}
+  .mp code,.mp strong,.mp b {font-weight:bold;color:#131211}
+  .mp em,.mp var {font-style:italic;color:#232221;text-decoration:none}
+  .mp a,.mp a:link,.mp a:hover,.mp a code,.mp a pre,.mp a tt,.mp a kbd,.mp a samp {color:#0000ff}
+  .mp b.man-ref {font-weight:normal;color:#434241}
+  .mp pre {padding:0 4ex}
+  .mp pre code {font-weight:normal;color:#434241}
+  .mp h2+pre,h3+pre {padding-left:0}
+  ol.man-decor,ol.man-decor li {margin:3px 0 10px 0;padding:0;float:left;width:33%;list-style-type:none;text-transform:uppercase;color:#999;letter-spacing:1px}
+  ol.man-decor {width:100%}
+  ol.man-decor li.tl {text-align:left}
+  ol.man-decor li.tc {text-align:center;letter-spacing:4px}
+  ol.man-decor li.tr {text-align:right;float:right}
+  </style>
+</head>
+<!--
+  The following styles are deprecated and will be removed at some point:
+  div#man, div#man ol.man, div#man ol.head, div#man ol.man.
+
+  The .man-page, .man-decor, .man-head, .man-foot, .man-title, and
+  .man-navigation should be used instead.
+-->
+<body id='manpage'>
+  <div class='mp' id='man'>
+
+  <div class='man-navigation' style='display:none'>
+    <a href="#NAME">NAME</a>
+    <a href="#DESCRIPTION">DESCRIPTION</a>
+    <a href="#REPOSITORY-URIS">REPOSITORY URIS</a>
+    <a href="#CONFIGURATION-FORMAT">CONFIGURATION FORMAT</a>
+    <a href="#EXAMPLES">EXAMPLES</a>
+    <a href="#SEE-ALSO">SEE ALSO</a>
+    <a href="#AUTHOR">AUTHOR</a>
+  </div>
+
+  <ol class='man-decor man-head man head'>
+    <li class='tl'>tiggit-conf(5)</li>
+    <li class='tc'></li>
+    <li class='tr'>tiggit-conf(5)</li>
+  </ol>
+
+  <h2 id="NAME">NAME</h2>
+<p class="man-name">
+  <code>tiggit-conf</code> - <span class="man-whatis">tiggit daemon configuration file</span>
+</p>
+
+<h2 id="DESCRIPTION">DESCRIPTION</h2>
+
+<p>This document describes the format of the <span class="man-ref">tiggit<span class="s">(1)</span></span> daemon configuration file.</p>
+
+<h2 id="REPOSITORY-URIS">REPOSITORY URIS</h2>
+
+<p>Remote <span class="man-ref">git<span class="s">(1)</span></span> repository URIs may be specified as HTTPS (e.g. https://github.com/morgant/tiggit.git) or SSH (e.g git@github.com:morgant/tiggit.git or ssh+git://git@github.com:morgant/tiggit.git) URIs ending with the '.git' file extension.</p>
+
+<p>HTTPS URIs are generally used for public repositories that do not require additional authentication, but SSH URIs require that SSH keys be configured for the user executing <span class="man-ref">tiggit<span class="s">(1)</span></span>. In the case of running tiggit in daemon mode, SSH URIs will require that SSH keys be configured for the _tiggit user which the daemon runs as.</p>
+
+<h2 id="CONFIGURATION-FORMAT">CONFIGURATION FORMAT</h2>
+
+<p>The /etc/tiggit.conf file accepts one remote git repository URI per line, with no leading or trailing whitespace.</p>
+
+<p>Any line beginning with a hash or pound symbol (#) will be treated as a comment and ignored.</p>
+
+<p>Lines beginning and ending with square brackets will be treated as groups which namespace all following repository URI lines until another group is encountered. Text between the square brackets will be used as the group name and a directory of the same name will be created within /Library/GitMirrors/. There is one reserved, special group name:</p>
+
+<dl>
+<dt class="flush"><code>auto</code></dt><dd>Attempts to parse the username out of GitHub URIs (HTTPS or SSH) to be used as the group name.</dd>
+</dl>
+
+
+<h2 id="EXAMPLES">EXAMPLES</h2>
+
+<p>A /etc/tiggit.conf containing the following:</p>
+
+<pre><code># this is a comment
+[auto]
+https://github.com/morgant/tiggit.git
+</code></pre>
+
+<p>Would result in the 'tiggit' repository being mirrored to /Library/GitMirrors/morgant/tiggit.git (the group name 'morgant' having been automatically parsed from the GitHub URI.)</p>
+
+<p>Alternatively, an /etc/tiggit.conf containing the following:</p>
+
+<pre><code># this is a comment
+[example]
+https://example/some/repo.git
+</code></pre>
+
+<p>  Would result in the 'repo' repository being mirrored to /Library/GitMirrors/example/repo.git (the group name 'example' having been explicitly specified.)</p>
+
+<h2 id="SEE-ALSO">SEE ALSO</h2>
+
+<p><span class="man-ref">tiggit<span class="s">(1)</span></span>, <span class="man-ref">git<span class="s">(1)</span></span></p>
+
+<h2 id="AUTHOR">AUTHOR</h2>
+
+<p>Morgan Aldridge <a href="&#109;&#97;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#x6d;&#x6f;&#x72;&#x67;&#97;&#110;&#x74;&#x40;&#x6d;&#97;&#107;&#107;&#x69;&#x6e;&#116;&#111;&#x73;&#x73;&#x68;&#117;&#46;&#99;&#111;&#109;" data-bare-link="true">&#109;&#111;&#x72;&#x67;&#x61;&#110;&#116;&#x40;&#109;&#97;&#107;&#107;&#105;&#x6e;&#116;&#x6f;&#x73;&#115;&#104;&#117;&#x2e;&#99;&#x6f;&#x6d;</a></p>
+
+
+  <ol class='man-decor man-foot man foot'>
+    <li class='tl'></li>
+    <li class='tc'>February 2019</li>
+    <li class='tr'>tiggit-conf(5)</li>
+  </ol>
+
+  </div>
+</body>
+</html>

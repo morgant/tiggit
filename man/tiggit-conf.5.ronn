@@ -1,0 +1,48 @@
+# tiggit-conf(5) -- tiggit daemon configuration file
+
+## DESCRIPTION
+
+This document describes the format of the tiggit(1) daemon configuration file.
+
+## REPOSITORY URIS
+
+Remote git(1) repository URIs may be specified as HTTPS (e.g. https://github.com/morgant/tiggit.git) or SSH (e.g git@github.com:morgant/tiggit.git or ssh+git://git@github.com:morgant/tiggit.git) URIs ending with the '.git' file extension.
+
+HTTPS URIs are generally used for public repositories that do not require additional authentication, but SSH URIs require that SSH keys be configured for the user executing tiggit(1). In the case of running tiggit in daemon mode, SSH URIs will require that SSH keys be configured for the _tiggit user which the daemon runs as.
+
+## CONFIGURATION FORMAT
+
+The /etc/tiggit.conf file accepts one remote git repository URI per line, with no leading or trailing whitespace.
+
+Any line beginning with a hash or pound symbol (#) will be treated as a comment and ignored.
+
+Lines beginning and ending with square brackets will be treated as groups which namespace all following repository URI lines until another group is encountered. Text between the square brackets will be used as the group name and a directory of the same name will be created within /Library/GitMirrors/. There is one reserved, special group name:
+
+* `auto`:
+  Attempts to parse the username out of GitHub URIs (HTTPS or SSH) to be used as the group name.
+
+## EXAMPLES
+
+A /etc/tiggit.conf containing the following:
+
+    # this is a comment
+    [auto]
+    https://github.com/morgant/tiggit.git
+
+Would result in the 'tiggit' repository being mirrored to /Library/GitMirrors/morgant/tiggit.git (the group name 'morgant' having been automatically parsed from the GitHub URI.)
+
+Alternatively, an /etc/tiggit.conf containing the following:
+
+    # this is a comment
+    [example]
+    https://example/some/repo.git
+  
+  Would result in the 'repo' repository being mirrored to /Library/GitMirrors/example/repo.git (the group name 'example' having been explicitly specified.)
+
+## SEE ALSO
+
+tiggit(1), git(1)
+
+## AUTHOR
+
+Morgan Aldridge <morgant@makkintosshu.com>

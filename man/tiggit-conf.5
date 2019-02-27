@@ -1,0 +1,71 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "TIGGIT\-CONF" "5" "February 2019" "" ""
+.
+.SH "NAME"
+\fBtiggit\-conf\fR \- tiggit daemon configuration file
+.
+.SH "DESCRIPTION"
+This document describes the format of the tiggit(1) daemon configuration file\.
+.
+.SH "REPOSITORY URIS"
+Remote git(1) repository URIs may be specified as HTTPS (e\.g\. https://github\.com/morgant/tiggit\.git) or SSH (e\.g git@github\.com:morgant/tiggit\.git or ssh+git://git@github\.com:morgant/tiggit\.git) URIs ending with the \'\.git\' file extension\.
+.
+.P
+HTTPS URIs are generally used for public repositories that do not require additional authentication, but SSH URIs require that SSH keys be configured for the user executing tiggit(1)\. In the case of running tiggit in daemon mode, SSH URIs will require that SSH keys be configured for the _tiggit user which the daemon runs as\.
+.
+.SH "CONFIGURATION FORMAT"
+The /etc/tiggit\.conf file accepts one remote git repository URI per line, with no leading or trailing whitespace\.
+.
+.P
+Any line beginning with a hash or pound symbol (#) will be treated as a comment and ignored\.
+.
+.P
+Lines beginning and ending with square brackets will be treated as groups which namespace all following repository URI lines until another group is encountered\. Text between the square brackets will be used as the group name and a directory of the same name will be created within /Library/GitMirrors/\. There is one reserved, special group name:
+.
+.TP
+\fBauto\fR
+Attempts to parse the username out of GitHub URIs (HTTPS or SSH) to be used as the group name\.
+.
+.SH "EXAMPLES"
+A /etc/tiggit\.conf containing the following:
+.
+.IP "" 4
+.
+.nf
+
+# this is a comment
+[auto]
+https://github\.com/morgant/tiggit\.git
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Would result in the \'tiggit\' repository being mirrored to /Library/GitMirrors/morgant/tiggit\.git (the group name \'morgant\' having been automatically parsed from the GitHub URI\.)
+.
+.P
+Alternatively, an /etc/tiggit\.conf containing the following:
+.
+.IP "" 4
+.
+.nf
+
+# this is a comment
+[example]
+https://example/some/repo\.git
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Would result in the \'repo\' repository being mirrored to /Library/GitMirrors/example/repo\.git (the group name \'example\' having been explicitly specified\.)
+.
+.SH "SEE ALSO"
+tiggit(1), git(1)
+.
+.SH "AUTHOR"
+Morgan Aldridge \fImorgant@makkintosshu\.com\fR
