@@ -21,7 +21,7 @@ If you intend to mirror private repositories, you will have to ensure that SSH k
 
 ## USAGE
 
-`tiggit` can be run manually, or automatically as a daemon. For further usage instructions, run `tiggit -h`.
+`tiggit` can be run manually, or automatically as a daemon. For further usage instructions, run `tiggit -h` or read the [tiggit(1)](man/tiggit.1.ronn) manpage.
 
 ### Manual
 
@@ -101,42 +101,10 @@ If you'll be running `tiggit` as a daemon, the following instructions are sugges
 
 ## CONFIGURATION
 
-When run in daemon mode, `tiggit` will read repos to mirror & update from `/etc/tiggit.conf`. The configuration file format supports comments, groups, and repository URLs.
-
-### Comments
-
-Comments are lines that begin with a hash/pound symbol (`#`):
-
-    # This is a comment
-
-_Important:_ Currently, only full-line comments are supported.
-
-### Groups
-
-Groups namespace repositories to prevent conflicts, but also for organization, specified by wrapping the group name in square brackets:
-
-    [group]
-
-A special `auto` group exists which will automatically group repositories by username parsed from the URI. Currently, only GitHub URIs are supported, but others can easily be added.
-
-### Repository URIs
-
-Each non-comment line following a group should be a repository URI to be mirrored:
-
-    https://github.com/morgant/tiggit.git
-
-Currently, HTTPS & SSH URIs are supported.
-
-## ENVIRONMENT VARIABLES
-
-`TIGGIT_CONFIG`: name of config file (default: `tiggit.conf`)
-
-`TIGGIT_CONFIG_PATH`: path to configuration file (default: `/etc`)
-
-`TIGGIT_MIRRORS_PATH`: path to mirrored repositories (default: `/Library/GitMirrors`)
-
-`TIGGIT_UPDATE_INTERVAL`: seconds between fetching updates to repositories (seconds; default: `900` [seconds] or 15 minutes)
+When run in daemon mode, `tiggit` will read repos to mirror & update from `/etc/tiggit.conf`. The configuration file format supports comments, groups, and repository URLs. See the [tiggit-conf(5)](man/tiggit-conf.5.ronn) manpage for further details.
 
 ## ACKNOWLEDGEMENTS
 
-Icons made by [Freepik](https://www.freepik.com/) from [https://www.flaticon.com/](www.flaticon.com) are licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
+Manual pages are generated with [`ronn`](http://rtomayko.github.io/ronn/).
+
+Icon made by [Freepik](https://www.freepik.com/) from [https://www.flaticon.com/](www.flaticon.com) is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
