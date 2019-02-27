@@ -95,7 +95,7 @@ function usage() {
 	echo
 	echo 'Commands:'
 	echo '  list                  : list all mirrored git repositories'
-	echo '  mirror <repository>   : mirror the specifed git repository'
+	echo '  mirror <repository>   : mirror the specified git repository'
 	echo '  update [<repository>] : update all or just the specified git repository'
 	echo
 	echo 'Environment Variables:'

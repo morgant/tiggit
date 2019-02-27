@@ -1,0 +1,59 @@
+# tiggit(1) -- mirror git repositories
+
+## SYNOPSIS
+
+`tiggit` [options] <command>
+
+## DESCRIPTION
+
+tiggit(1) simplifies mirroring and updating mirrors of remote git repositories. It also supports a daemon mode which can fully automate the process.
+
+## OPTIONS
+
+* `-c`, `--config=<file>`:
+  specify an alternate config file
+
+* `-d`, `--daemon`:
+  run as a daemon, mirroring repositories from config file
+
+* `-h`, `--help`:
+  print usage instructions
+
+* `-v`, `--verbose`:
+  verbose output
+
+* `-V`, `--version`:
+  print version information
+
+## COMMANDS
+
+* `list`:
+  list all mirrored git repositories
+
+* `mirror <repository>`:
+  mirror the specified git repository
+
+* `update [<repository>]`:
+  update all or just the specified git repository
+
+## ENVIRONMENT VARIABLES
+
+* `TIGGIT_CONFIG`:
+  name of config file (default: tiggit.conf)
+
+*	`TIGGIT_CONFIG_PATH`:
+  path to configuration file (default: /etc)
+
+* `TIGGIT_MIRRORS_PATH`:
+  path to mirrored repositories (default: /Library/GitMirrors)
+
+* `TIGGIT_UPDATE_INTERVAL`:
+  seconds between fetching updates to repositories (seconds; default: 900)
+
+## SEE ALSO
+
+git(1)
+
+## AUTHOR
+
+Morgan Aldridge <morgant@makkintosshu.com>

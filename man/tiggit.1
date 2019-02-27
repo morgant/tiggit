@@ -1,0 +1,73 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "TIGGIT" "1" "February 2019" "" ""
+.
+.SH "NAME"
+\fBtiggit\fR \- mirror git repositories
+.
+.SH "SYNOPSIS"
+\fBtiggit\fR \fIoptions\fR \fIcommand\fR
+.
+.SH "DESCRIPTION"
+tiggit(1) simplifies mirroring and updating mirrors of remote git repositories\. It also supports a daemon mode which can fully automate the process\.
+.
+.SH "OPTIONS"
+.
+.TP
+\fB\-c\fR, \fB\-\-config=<file>\fR
+specify an alternate config file
+.
+.TP
+\fB\-d\fR, \fB\-\-daemon\fR
+run as a daemon, mirroring repositories from config file
+.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+print usage instructions
+.
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+verbose output
+.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+print version information
+.
+.SH "COMMANDS"
+.
+.TP
+\fBlist\fR
+list all mirrored git repositories
+.
+.TP
+\fBmirror <repository>\fR
+mirror the specified git repository
+.
+.TP
+\fBupdate [<repository>]\fR
+update all or just the specified git repository
+.
+.SH "ENVIRONMENT VARIABLES"
+.
+.TP
+\fBTIGGIT_CONFIG\fR
+name of config file (default: tiggit\.conf)
+.
+.TP
+\fBTIGGIT_CONFIG_PATH\fR
+path to configuration file (default: /etc)
+.
+.TP
+\fBTIGGIT_MIRRORS_PATH\fR
+path to mirrored repositories (default: /Library/GitMirrors)
+.
+.TP
+\fBTIGGIT_UPDATE_INTERVAL\fR
+seconds between fetching updates to repositories (seconds; default: 900)
+.
+.SH "SEE ALSO"
+git(1)
+.
+.SH "AUTHOR"
+Morgan Aldridge \fImorgant@makkintosshu\.com\fR
