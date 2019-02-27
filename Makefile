@@ -21,7 +21,9 @@ user:
 install: bin/tiggit user
 	mkdir -p $(PREFIX)/bin
 	install -m755 bin/tiggit $(PREFIX)/bin
+	mkdir -p $(PREFIX)/share/man/man1
 	install man/tiggit.1 $(PREFIX)/share/man/man1
+	mkdir -p $(PREFIX)/share/man/man5
 	install man/tiggit-conf.5 $(PREFIX)/share/man/man5
 	install -m644 etc/tiggit.conf.default /etc
 	mkdir -p /Library/GitMirrors
