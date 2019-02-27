@@ -59,6 +59,7 @@
     <a href="#OPTIONS">OPTIONS</a>
     <a href="#COMMANDS">COMMANDS</a>
     <a href="#ENVIRONMENT-VARIABLES">ENVIRONMENT VARIABLES</a>
+    <a href="#FILES">FILES</a>
     <a href="#SEE-ALSO">SEE ALSO</a>
     <a href="#AUTHOR">AUTHOR</a>
   </div>
@@ -80,7 +81,7 @@
 
 <h2 id="DESCRIPTION">DESCRIPTION</h2>
 
-<p><a class="man-ref" href="tiggit.1.html">tiggit<span class="s">(1)</span></a> simplifies mirroring and updating mirrors of remote git repositories. It also supports a daemon mode which can fully automate the process.</p>
+<p><a class="man-ref" href="tiggit.1.html">tiggit<span class="s">(1)</span></a> simplifies mirroring and updating mirrors of remote <span class="man-ref">git<span class="s">(1)</span></span> repositories. It also supports a daemon mode which can fully automate the process.</p>
 
 <h2 id="OPTIONS">OPTIONS</h2>
 
@@ -112,13 +113,22 @@
 </dl>
 
 
+<h2 id="FILES">FILES</h2>
+
+<dl>
+<dt>/etc/tiggit.conf</dt><dd><p>Daemon configuration file</p></dd>
+<dt>/Library/GitMirrors</dt><dd><p>Directory containing git repositories' mirrors</p></dd>
+<dt>/var/log/tiggit.log</dt><dd><p>Log file</p></dd>
+</dl>
+
+
 <h2 id="SEE-ALSO">SEE ALSO</h2>
 
-<p><span class="man-ref">git<span class="s">(1)</span></span></p>
+<p><span class="man-ref">tiggit-conf<span class="s">(5)</span></span>, <span class="man-ref">git<span class="s">(1)</span></span></p>
 
 <h2 id="AUTHOR">AUTHOR</h2>
 
-<p>Morgan Aldridge <a href="&#109;&#97;&#105;&#108;&#x74;&#111;&#x3a;&#x6d;&#x6f;&#x72;&#x67;&#97;&#x6e;&#x74;&#x40;&#109;&#97;&#x6b;&#x6b;&#x69;&#110;&#116;&#x6f;&#x73;&#x73;&#104;&#x75;&#x2e;&#x63;&#111;&#109;" data-bare-link="true">&#x6d;&#x6f;&#114;&#x67;&#97;&#x6e;&#x74;&#x40;&#109;&#97;&#107;&#107;&#105;&#110;&#x74;&#111;&#115;&#115;&#104;&#x75;&#x2e;&#99;&#111;&#109;</a></p>
+<p>Morgan Aldridge <a href="&#109;&#x61;&#x69;&#108;&#116;&#x6f;&#x3a;&#109;&#x6f;&#114;&#103;&#x61;&#110;&#116;&#64;&#109;&#97;&#x6b;&#x6b;&#x69;&#110;&#x74;&#111;&#115;&#x73;&#104;&#x75;&#46;&#99;&#111;&#x6d;" data-bare-link="true">&#109;&#x6f;&#114;&#103;&#x61;&#110;&#116;&#x40;&#x6d;&#97;&#x6b;&#x6b;&#105;&#x6e;&#x74;&#111;&#115;&#115;&#x68;&#x75;&#46;&#99;&#x6f;&#x6d;</a></p>
 
 
   <ol class='man-decor man-foot man foot'>

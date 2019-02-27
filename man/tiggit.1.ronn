@@ -6,7 +6,7 @@
 
 ## DESCRIPTION
 
-tiggit(1) simplifies mirroring and updating mirrors of remote git repositories. It also supports a daemon mode which can fully automate the process.
+tiggit(1) simplifies mirroring and updating mirrors of remote git(1) repositories. It also supports a daemon mode which can fully automate the process.
 
 ## OPTIONS
 
@@ -50,9 +50,20 @@ tiggit(1) simplifies mirroring and updating mirrors of remote git repositories. 
 * `TIGGIT_UPDATE_INTERVAL`:
   seconds between fetching updates to repositories (seconds; default: 900)
 
+## FILES
+
+* /etc/tiggit.conf:
+  Daemon configuration file
+
+* /Library/GitMirrors:
+  Directory containing git repositories' mirrors
+
+* /var/log/tiggit.log:
+  Log file
+
 ## SEE ALSO
 
-git(1)
+tiggit-conf(5), git(1)
 
 ## AUTHOR
 
