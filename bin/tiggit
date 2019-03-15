@@ -7,6 +7,8 @@
 # 
 # v0.1   - 2019-02-26 - Morgan Aldridge <morgant@makkintosshu.com>
 #                       Initial release
+# v0.1.1 - 2019-03-15 - Morgan Aldridge
+#                       Improved logging.
 # LICENSE:
 # 
 # Copyright (c) 2018-2019, Morgan T. Aldridge. All rights reserved.
@@ -34,12 +36,14 @@
 
 # info
 tool=$(basename "$0")
-version='0.1'
+version='0.1.1'
 copyright='(c) 2018-2019 Morgan T. Aldridge'
 
 # environment variables
 TIGGIT_CONFIG="${TIGGIT_CONFIG:-tiggit.conf}"
 TIGGIT_CONFIG_PATH="${TIGGIT_CONFIG_PATH:-/etc}"
+TIGGIT_LOG="${TIGGIT_LOG:-tiggit.log}"
+TIGGIT_LOG_PATH="${TIGGIT_LOG_PATH:-/var/log}"
 TIGGIT_MIRRORS_PATH="${TIGGIT_MIRRORS_PATH:-/Library/GitMirrors}"
 TIGGIT_UPDATE_INTERVAL="${TIGGIT_UPDATE_INTERVAL:-900}"
 TIGGIT_USER="${TIGGIT_USER:-_tiggit}"
@@ -51,6 +55,7 @@ indent_level=0
 verbose=false
 daemon=false
 config_file="${TIGGIT_CONFIG_PATH}/${TIGGIT_CONFIG}"
+log_file="${TIGGIT_LOG_PATH}/${TIGGIT_LOG}"
 config_repos=()
 
 function in_array() {
@@ -82,6 +87,52 @@ function indent() {
   return $?
 }
 
+function log() {
+  local level="$1"
+  local message="$2"
+
+  local facility="user"
+  if $daemon; then facility="daemon"; fi
+
+  # build the logger command & parameters
+  local cmd=("logger")
+  if [ "${level}" = "error" ]; then cmd+=("-s"); fi
+  cmd+=("-p")
+  cmd+=("${facility}.${level}")
+  cmd+=("-t")
+  cmd+=("${tool}")
+  cmd+=("${message}")
+
+  # echo message to stdout if in verbose mode (except errors, we'll let logger echo them to stderr)
+  if $verbose && [ "${level}" != "error" ]; then echo "${message}"; fi
+
+  # echo message to log if in daemon mode
+  if $daemon; then echo "$(date "+%Y-%m-%dT%H:%M:%S%z") ${tool}[$$] [${level}] ${message}" > "${log_file}"; fi
+
+  # execute the logger command
+  "${cmd[@]}"
+}
+
+function debug() {
+  log debug "$1"
+}
+
+function info() {
+  log info "$1"
+}
+
+function notice() {
+  log notice "$1"
+}
+
+function warning() {
+  log warning "$1"
+}
+
+function error() {
+  log error $1
+}
+
 # print usage instructions (help)
 function usage() {
 	echo "Usage: $tool [options] <command> [<args>]"
@@ -101,7 +152,9 @@ function usage() {
 	echo 'Environment Variables:'
 	echo '  TIGGIT_CONFIG         : name of config file (default: tiggit.conf)'
 	echo '  TIGGIT_CONFIG_PATH    : path to configuration file (default: /etc)'
-	echo '  TIGGIT_MIRRORS_PATH    : path to mirrored repositories (default: /Library/GitMirrors)'
+	echo '  TIGGIT_LOG            : name of log file (default: tiggit.log)'
+	echo '  TIGGIT_LOG_PATH       : path to log file (default: /var/log)'
+	echo '  TIGGIT_MIRRORS_PATH   : path to mirrored repositories (default: /Library/GitMirrors)'
 	echo '  TIGGIT_UPDATE_INTERVAL: seconds between fetching updates to repositories (seconds; default: 900)'
 }
 
@@ -193,11 +246,11 @@ function repo_mirror_create() {
   if ! $verbose; then git_cmd+=("-q"); fi
   git_cmd+=("--mirror" "${remote_repo}" "${repo_path}")
 
-  if $verbose; then echo "Mirroring '${remote_repo}' to '${repo_path}'..."; fi
+  info "Mirroring '${remote_repo}' to '${repo_path}'..."
   if "${git_cmd[@]}"; then
-    if $verbose; then echo "Done."; fi
+    info "Done."
   else
-    if $verbose; then echo "ERROR!"; fi
+    error "ERROR!"
     exit 1
   fi
 }
@@ -208,16 +261,16 @@ function repo_mirror_update() {
   local repo_path="${TIGGIT_MIRRORS_PATH}/${repo}.git"
   local git_cmd=("indent" "git" "-C" "${repo_path}" "remote" "update")
 
-  if $verbose; then echo "Updating '${repo}' in '${repo_path}'..."; fi
+  info "Updating '${repo}' in '${repo_path}'..."
   if ! $verbose; then
     "${git_cmd[@]}" >/dev/null
   else
     "${git_cmd[@]}"
   fi
   if [ $? -gt 0 ]; then
-    if $verbose; then echo "ERROR!"; fi
+    error "ERROR!"
   else
-    if $verbose; then echo "Done."; fi
+    info "Done."
   fi
 }
 
@@ -242,15 +295,15 @@ function repo_mirrors_list() {
 function repo_mirror_update_all() {
   local success=true
 
-  if $verbose; then echo "Updating all repositories in '${TIGGIT_MIRRORS_PATH}'..."; fi
+  info "Updating all repositories in '${TIGGIT_MIRRORS_PATH}'..."
   while IFS= read -r line; do
     indent repo_mirror_update "$line"
     if [ $? -gt 0 ]; then success=false; fi
   done <<< "$(repo_mirrors_list)"
   if $success; then
-    if $verbose; then echo "Done."; fi
+    info "Done."
   else
-    if $verbose; then echo "Done."; fi
+    error "ERROR!"
   fi
 
   $success
@@ -260,9 +313,9 @@ function repo_mirror_update_all() {
 function config_load() {
   local success=true
 
-  if $verbose; then echo "Reading git repositories to mirror from config file '${config_file}'... "; fi
+  info "Reading git repositories to mirror from config file '${config_file}'... "
   if [ ! -f "${config_file}" ]; then
-    echo "ERROR! Config file '${config_file} not found!"
+    error "ERROR! Config file '${config_file} not found!"
     success=false
   else
     local line
@@ -280,16 +333,16 @@ function config_load() {
           if [[ "${line}" =~ github\.com[:/](.+)/.+\.git$ ]]; then
             auto_group="${BASH_REMATCH[1]}"
           fi
-          if $verbose; then indent echo "[${auto_group}] ${line}"; fi
+          info "$(indent echo "[${auto_group}] ${line}")"
           config_repos+=("${auto_group}::${line}")
         else
-          if $verbose; then indent echo "[${group}] ${line}"; fi
+          info "$(indent echo "[${group}] ${line}")"
           config_repos+=("${group}::${line}")
         fi
       fi
     done < "${config_file}"
   fi
-  if $verbose; then echo "Done."; fi
+  info "Done."
 
   $success
 }
@@ -297,33 +350,33 @@ function config_load() {
 # run as a daemon, mirroring repositories from config file
 function daemonize() {
   if ! $daemon; then
-    echo "ERROR! Not in daemon mode, so cannot daemonize! Exiting." 1>&2
+    error "ERROR! Not in daemon mode, so cannot daemonize! Exiting."
     exit 1
   fi
 
   if ! config_load; then
-    echo "ERROR! Could not load repositories from config file! Exiting." 1>&2
+    error "ERROR! Could not load repositories from config file! Exiting."
     exit 1
   fi
 
   # mirror all the git repos
-  if $verbose; then echo "Mirroring all repositories... "; fi
+  info "Mirroring all repositories... "
   local group=""
   for repo in "${config_repos[@]}"; do
     if [[ "$repo" =~ ^(.*)::(.+)$ ]]; then
       group="${BASH_REMATCH[1]}"
       repo="${BASH_REMATCH[2]}"
     fi
-    if $verbose; then echo -n "  [${group}] ${repo} ... "; fi
+    info "  [${group}] ${repo} ... "
     if is_repo_mirrored "${repo}" "${group}"; then
-      if $verbose; then echo "Mirrored"; fi
+      info "Mirrored"
     elif indent repo_mirror_create "${repo}" "${group}"; then
-      if $verbose; then echo "Mirrored"; fi
+      info "Mirrored"
     else
-      echo "ERROR!"
+      error "ERROR!"
     fi
   done
-  if $verbose; then echo "Done."; fi
+  info "Done.";
 
   # configure traps
   trap 'config_load' HUP
@@ -339,7 +392,7 @@ function daemonize() {
 
     # wait the remainder of the interval
     sleep_time="$(( ${TIGGIT_UPDATE_INTERVAL} - ( $(date +%s) - ${start_time} ) ))"
-    if $verbose; then echo "Sleeping ${sleep_time} seconds..."; fi
+    info "Sleeping ${sleep_time} seconds..."
     sleep "${sleep_time}"
   done
 }
@@ -347,9 +400,10 @@ function daemonize() {
 function main() {
   # require at least one option or argument
   if [ $argc -eq 0 ]; then
-  	echo "No options or arguments were specified!"$'\n'
-  	usage
-  	exit 1
+    error "No options or arguments were specified!"
+    echo
+    usage
+    exit 1
   fi
   
 	# handle arguments
