@@ -107,7 +107,7 @@ function log() {
   if $verbose && [ "${level}" != "error" ]; then echo "${message}"; fi
 
   # echo message to log if in daemon mode
-  if $daemon; then echo "$(date "+%Y-%m-%dT%H:%M:%S%z") ${tool}[$$] [${level}] ${message}" > "${log_file}"; fi
+  if $daemon; then echo "$(date "+%Y-%m-%dT%H:%M:%S%z") ${tool}[$$] [${level}] ${message}" >> "${log_file}"; fi
 
   # execute the logger command
   "${cmd[@]}"
