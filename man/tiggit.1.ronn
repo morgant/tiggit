@@ -44,6 +44,12 @@ tiggit(1) simplifies mirroring and updating mirrors of remote git(1) repositorie
 *	`TIGGIT_CONFIG_PATH`:
   path to configuration file (default: /etc)
 
+* `TIGGIT_LOG`:
+  name of log file (default: tiggit.log)
+
+* `TIGGIT_LOG_PATH`:
+  path to log file (default: /var/log)
+
 * `TIGGIT_MIRRORS_PATH`:
   path to mirrored repositories (default: /Library/GitMirrors)
 
