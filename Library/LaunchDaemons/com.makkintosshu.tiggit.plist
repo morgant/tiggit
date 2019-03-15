@@ -18,9 +18,5 @@
     <true/>
     <key>ProcessType</key>
     <string>Background</string>
-    <key>StandardOutPath</key>
-    <string>/var/log/tiggit.log</string>
-    <key>StandardErrorPath</key>
-    <string>/var/log/tiggit.log</string>
   </dict>
 </plist>
