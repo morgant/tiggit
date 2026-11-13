@@ -98,35 +98,35 @@ suggested to create a "machine user" GitHub account, with its own SSH keys:
 1. If you haven't already, create a [machine user](https://developer.github.com/v3/guides/managing-deploy-keys/#machine-users)
     account on GitHub
 2. Configure and/or copy the SSH key for your `_tiggit` daemon user:
-   a. Run `sudo -u _tiggit ls -al ~_tiggit/.ssh/` to list the `_tiggit`
+   1. Run `sudo -u _tiggit ls -al ~_tiggit/.ssh/` to list the `_tiggit`
         user's SSH keys
-   b. If an `id_rsa.pub` public key file already exists, skip to Step 2.g
-   c. Run `sudo -u _tiggit ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
+   2. If an `id_rsa.pub` public key file already exists, skip to Step 2.g
+   3. Run `sudo -u _tiggit ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
         (replacing `your_email@example.com` with the email address for your
         GitHub machine user account)
-   d. When prompted to "Enter a file in which to save the key," press enter
+   4. When prompted to "Enter a file in which to save the key," press enter
         to save it in the default location (in macOS, this should be
         `/Library/GitMirrors/.ssh/`)
-   e. When prompted to enter a passphrase, press return twice to save without
+   5. When prompted to enter a passphrase, press return twice to save without
         a passphrase (a passphrase will prevent the daemon from being able to
         use the SSH key)
-   f. Run `sudo -u _tiggit ssh-keyscan -H github.com >> ~_tiggit/.ssh/known_hosts`
+   6. Run `sudo -u _tiggit ssh-keyscan -H github.com >> ~_tiggit/.ssh/known_hosts`
         to add GitHub to the `_tiggit` user's list of authorized hosts
-   g. Run `sudo -u _tiggit cat ~_tiggit/.ssh/id_rsa.pub` to display the
+   7. Run `sudo -u _tiggit cat ~_tiggit/.ssh/id_rsa.pub` to display the
         `_tiggit` user's public key
-   h. Copy the output from the previous command (it should begin with
+   8. Copy the output from the previous command (it should begin with
         "ssh-rsa" and end with the email address you entered in Step 2.c)
 3. Add the `_tiggit` daemon user's SSH public key to the GitHub machine
     user's account:
-   a. Log into GitHub using your machine user account
-   b. Navigate to the GitHub [SSH and GPG keys settings](https://github.com/settings/keys)
-   c. Click the [New SSH key](https://github.com/settings/ssh/new) button
-   d. Enter `_tiggit@<hostname>` in the Title field (replacing `<hostname>`
+   1. Log into GitHub using your machine user account
+   2. Navigate to the GitHub [SSH and GPG keys settings](https://github.com/settings/keys)
+   3. Click the [New SSH key](https://github.com/settings/ssh/new) button
+   4. Enter `_tiggit@<hostname>` in the Title field (replacing `<hostname>`
         with the hostname or IP address of the computer running `tiggit` as a
         daemon)
-   e. Paste the `_tiggit` user's SSH public key into the Key field (as copied
+   5. Paste the `_tiggit` user's SSH public key into the Key field (as copied
         in Step 2.h above)
-   f. Click the "Add SSH key" button
+   6. Click the "Add SSH key" button
 4. Give your GitHub machine user account access to the repositories you want
     to mirror (as either a collaborator, an outside collaborator, or a team
     member
