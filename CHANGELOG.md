@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Added this CHANGELOG file with documentation for all prior releases
+* Added this `CHANGELOG.md` file with documentation for all prior releases
+
+### Changed
+
+* Improved formatting of [`README.md`](README.md)
 
 ## [0.1.1] - 2019-03-15
 
