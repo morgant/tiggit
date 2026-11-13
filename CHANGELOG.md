@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* The tiggit mirrors path (overridden by the `TIGGIT_MIRRORS_PATH` environment
+    variable) default location has changed from the macOS-specific
+    `/Library/GitMirrors/` to the POSIX-friendly `/var/db/tiggit/`. However,
+    the `com.makkintosshu.tiggit.plist` launchd.plist(5) for macOS still
+    overrides the `TIGGIT_MIRRORS_PATH` environment variable to
+    `/Library/GitMirrors/` for backwards compatibility for existing
+    installations.
 * Improved formatting of [`README.md`](README.md)
 
 ## [0.1.1] - 2019-03-15

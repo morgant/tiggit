@@ -14,6 +14,11 @@
     </array>
     <key>UserName</key>
     <string>_tiggit</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>TIGGIT_MIRRORS_PATH</key>
+      <string>/Library/GitMirrors</string>
+    </dict>
     <key>KeepAlive</key>
     <true/>
     <key>ProcessType</key>

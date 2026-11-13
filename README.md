@@ -28,7 +28,7 @@ If you intend to mirror private repositories, you will have to ensure that
 SSH keys are configured correctly. If you will be mirroring private
 repositories with `tiggit` running as a daemon, then the SSH keys will need to
 be configured for the the `_tiggit` user (in macOS, keys should exist in
-`/Library/WebServer/.ssh`). See [GitHub SSH Host Keys](#github-ssh-host-keys)
+`/Library/GitMirrors/.ssh`). See [GitHub SSH Host Keys](#github-ssh-host-keys)
 for further details.
 
 ## USAGE
