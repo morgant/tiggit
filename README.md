@@ -1,6 +1,7 @@
 ![tiger](docs/tiger.svg)
 
 # tig|git
+
 by Morgan Aldridge <morgant@makkintosshu.com>
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=DBY3R8ARLDELE&currency_code=USD&source=url)
@@ -103,8 +104,16 @@ If you'll be running `tiggit` as a daemon, the following instructions are sugges
 
 When run in daemon mode, `tiggit` will read repos to mirror & update from `/etc/tiggit.conf`. The configuration file format supports comments, groups, and repository URLs. See the [tiggit-conf(5)](man/tiggit-conf.5.ronn) manpage for further details.
 
+## CHANGE LOG
+
+See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
+
 ## ACKNOWLEDGEMENTS
 
 Manual pages are generated with [`ronn`](http://rtomayko.github.io/ronn/).
 
 Icon made by [Freepik](https://www.freepik.com/) from [https://www.flaticon.com/](www.flaticon.com) is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
+
+## LICENSE
+
+Released under the [MIT license](LICENSE).
