@@ -35,7 +35,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 # info
-tool=$(basename "$0")
+_self=$(basename "$0")
 version='0.1.1'
 copyright='(c) 2018-2026 Morgan T. Aldridge'
 
@@ -100,14 +100,14 @@ function log() {
   cmd+=("-p")
   cmd+=("${facility}.${level}")
   cmd+=("-t")
-  cmd+=("${tool}")
+  cmd+=("${_self}")
   cmd+=("${message}")
 
   # echo message to stdout if in verbose mode (except errors, we'll let logger echo them to stderr)
   if $verbose && [ "${level}" != "error" ]; then echo "${message}"; fi
 
   # echo message to log if in daemon mode
-  if $daemon; then echo "$(date "+%Y-%m-%dT%H:%M:%S%z") ${tool}[$$] [${level}] ${message}" >> "${log_file}"; fi
+  if $daemon; then echo "$(date "+%Y-%m-%dT%H:%M:%S%z") ${_self}[$$] [${level}] ${message}" >> "${log_file}"; fi
 
   # execute the logger command
   "${cmd[@]}"
@@ -135,7 +135,7 @@ function error() {
 
 # print usage instructions (help)
 function usage() {
-	echo "Usage: $tool [options] <command> [<args>]"
+	echo "Usage: ${_self} [options] <command> [<args>]"
 	echo
 	echo 'Options:'
 	echo '  -c, --config=<file>   : specify an alternate config file'
@@ -160,7 +160,7 @@ function usage() {
 
 # print version info
 function version() {
-	echo "$tool v$version $copyright"
+	echo "${_self} v${version} ${copyright}"
 }
 
 # preprocess arguments and convert combined & long options to individual options
@@ -439,7 +439,7 @@ function main() {
 			
 				# unknown option
 				*)
-					echo "$tool: Unknown option '${argv[$i]}''!"
+					echo "${_self}: Unknown option '${argv[$i]}''!"
 					exit 1
 					;;
 			esac
@@ -464,7 +464,7 @@ function main() {
 			    ;;
 			  # unknown command/argument
 				*)
-				  echo "$tool: Unknown command '${argv[$i]}'!"
+				  echo "${_self}: Unknown command '${argv[$i]}'!"
 					exit 1
 					;;
 			esac
