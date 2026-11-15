@@ -1,4 +1,4 @@
-![tiger](docs/tiger.svg)
+![tiger](doc/tiger.svg)
 
 # tig|git
 
@@ -150,7 +150,9 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
 ## ACKNOWLEDGEMENTS
 
-Icon made by [Freepik](https://www.freepik.com/) from [https://www.flaticon.com/](www.flaticon.com) is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
+Icon made by [Freepik](https://www.freepik.com/) from
+[https://www.flaticon.com/](https://www.flaticon.com) is licensed by [CC 3.0
+BY](http://creativecommons.org/licenses/by/3.0/)
 
 ## LICENSE
 
