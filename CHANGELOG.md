@@ -19,18 +19,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     the `com.makkintosshu.tiggit.plist` launchd.plist(5) for macOS still
     overrides the `TIGGIT_MIRRORS_PATH` environment variable to
     `/Library/GitMirrors/` for backwards compatibility for existing
-    installations.
+    installations. (Issue [#6](https://github.com/morgant/tiggit/issues/6)
 * Updated [tiggit(1)](man/tiggit.1) manual page regarding new default for the
     `TIGGIT_MIRRORS_PATH` environment variable, including examples in
-    [tiggit-conf(5)](man/tiggit-conf.5).
+    [tiggit-conf(5)](man/tiggit-conf.5) (issue
+    [#6](https://github.com/morgant/tiggit/issues/6)
 * Improved formatting of [`README.md`](README.md)
 
 ### Removed
 
 * Removed dependancy on ruby and ruby gems, especially
     [ronn](https://github.com/rtomayko/ronn) (previously used to generate
-    manual pages from Markdown files)
+    manual pages from Markdown files; issue
+    [#5](https://github.com/morgant/tiggit/issues/5))
 * Removed `.ronn` and `.html` versions of manual pages in [`man/`](man/)
+    (issue [#5](https://github.com/morgant/tiggit/issues/5))
 
 ## [0.1.1] - 2019-03-15
 
