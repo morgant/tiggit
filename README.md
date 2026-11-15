@@ -1,4 +1,4 @@
-![tiger](doc/tiger.svg)
+![tiger](doc/tiggit-292x334px.png)
 
 # tig|git
 
@@ -150,9 +150,9 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
 ## ACKNOWLEDGEMENTS
 
-Icon made by [Freepik](https://www.freepik.com/) from
-[https://www.flaticon.com/](https://www.flaticon.com) is licensed by [CC 3.0
-BY](http://creativecommons.org/licenses/by/3.0/)
+The tiggit icon is partially derived from [tiger icon](https://www.flaticon.com/free-icon/tiger_4600408)
+created by [smalllikeart on Flaticon](https://www.flaticon.com/authors/smalllikeart)
+and released under the [Flaticon License](https://www.flaticon.com/legal#nav-flaticon-agreement).
 
 ## LICENSE
 
