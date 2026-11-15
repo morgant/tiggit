@@ -21,9 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     `/Library/GitMirrors/` for backwards compatibility for existing
     installations. (Issue [#6](https://github.com/morgant/tiggit/issues/6)
 * Updated [tiggit(1)](man/tiggit.1) manual page regarding new default for the
-    `TIGGIT_MIRRORS_PATH` environment variable, including examples in
+    `TIGGIT_MIRRORS_PATH` environment variable, including updated examples in
     [tiggit-conf(5)](man/tiggit-conf.5) (issue
-    [#6](https://github.com/morgant/tiggit/issues/6)
+    [#6](https://github.com/morgant/tiggit/issues/6))
 * Improved formatting of [`README.md`](README.md)
 
 ### Removed
