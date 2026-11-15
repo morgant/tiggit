@@ -1,7 +1,5 @@
-.\" generated with Ronn/v0.7.3
-.\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "TIGGIT\-CONF" "5" "February 2019" "" ""
+.TH "TIGGIT\-CONF" "5" "November 2026" "" ""
 .
 .SH "NAME"
 \fBtiggit\-conf\fR \- tiggit daemon configuration file
@@ -22,7 +20,7 @@ The /etc/tiggit\.conf file accepts one remote git repository URI per line, with 
 Any line beginning with a hash or pound symbol (#) will be treated as a comment and ignored\.
 .
 .P
-Lines beginning and ending with square brackets will be treated as groups which namespace all following repository URI lines until another group is encountered\. Text between the square brackets will be used as the group name and a directory of the same name will be created within /Library/GitMirrors/\. There is one reserved, special group name:
+Lines beginning and ending with square brackets will be treated as groups which namespace all following repository URI lines until another group is encountered\. Text between the square brackets will be used as the group name and a directory of the same name will be created within /var/db/tiggit/\. There is one reserved, special group name:
 .
 .TP
 \fBauto\fR
@@ -44,7 +42,7 @@ https://github\.com/morgant/tiggit\.git
 .IP "" 0
 .
 .P
-Would result in the \'tiggit\' repository being mirrored to /Library/GitMirrors/morgant/tiggit\.git (the group name \'morgant\' having been automatically parsed from the GitHub URI\.)
+Would result in the \'tiggit\' repository being mirrored to /var/db/tiggit/morgant/tiggit\.git (the group name \'morgant\' having been automatically parsed from the GitHub URI\.)
 .
 .P
 Alternatively, an /etc/tiggit\.conf containing the following:
@@ -62,7 +60,7 @@ https://example/some/repo\.git
 .IP "" 0
 .
 .P
-Would result in the \'repo\' repository being mirrored to /Library/GitMirrors/example/repo\.git (the group name \'example\' having been explicitly specified\.)
+Would result in the \'repo\' repository being mirrored to /var/db/tiggit/example/repo\.git (the group name \'example\' having been explicitly specified\.)
 .
 .SH "SEE ALSO"
 tiggit(1), git(1)

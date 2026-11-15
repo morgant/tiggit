@@ -34,7 +34,7 @@ for further details.
 ## USAGE
 
 `tiggit` can be run manually or automatically as a daemon. For further usage
-instructions, run `tiggit -h` or read the [tiggit(1)](man/tiggit.1.ronn)
+instructions, run `tiggit -h` or read the [tiggit(1)](man/tiggit.1)
 manual page.
 
 ### Manual
@@ -135,7 +135,7 @@ suggested to create a "machine user" GitHub account, with its own SSH keys:
 
 When run in daemon mode, `tiggit` will read repos to mirror & update from
 `/etc/tiggit.conf`. The configuration file format supports comments, groups,
-and repository URLs. See the [tiggit-conf(5)](man/tiggit-conf.5.ronn) manual
+and repository URLs. See the [tiggit-conf(5)](man/tiggit-conf.5) manual
 page for further details.
 
 ## CHANGE LOG
@@ -143,8 +143,6 @@ page for further details.
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
 ## ACKNOWLEDGEMENTS
-
-Manual pages are generated with [`ronn`](http://rtomayko.github.io/ronn/).
 
 Icon made by [Freepik](https://www.freepik.com/) from [https://www.flaticon.com/](www.flaticon.com) is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
 

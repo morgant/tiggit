@@ -20,7 +20,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     overrides the `TIGGIT_MIRRORS_PATH` environment variable to
     `/Library/GitMirrors/` for backwards compatibility for existing
     installations.
+* Updated [tiggit(1)](man/tiggit.1) manual page regarding new default for the
+    `TIGGIT_MIRRORS_PATH` environment variable, including examples in
+    [tiggit-conf(5)](man/tiggit-conf.5).
 * Improved formatting of [`README.md`](README.md)
+
+### Removed
+
+* Removed dependancy on ruby and ruby gems, especially
+    [ronn](https://github.com/rtomayko/ronn) (previously used to generate
+    manual pages from Markdown files)
+* Removed `.ronn` and `.html` versions of manual pages in [`man/`](man/)
 
 ## [0.1.1] - 2019-03-15
 
