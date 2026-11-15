@@ -12,6 +12,12 @@ by Morgan Aldridge <morgant@makkintosshu.com>
 remote git repositories for backup purposes. Not to be confused with
 [gittig](https://github.com/tuler/gittig).
 
+## PREREQUISITES
+
+* `git`
+* `bash`
+* GNU `make`
+
 ## INSTALLATION
 
 Installation is performed as follows:
