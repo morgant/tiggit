@@ -9,6 +9,8 @@
 #                       Initial release
 # v0.1.1 - 2019-03-15 - Morgan Aldridge
 #                       Improved logging.
+# v0.?   - 2026-11-16 - Morgan Aldridge
+#                       
 # LICENSE:
 # 
 # Copyright (c) 2018-2026, Morgan T. Aldridge. All rights reserved.
@@ -44,7 +46,6 @@ TIGGIT_CONFIG="${TIGGIT_CONFIG:-tiggit.conf}"
 TIGGIT_CONFIG_PATH="${TIGGIT_CONFIG_PATH:-/etc}"
 TIGGIT_LOG="${TIGGIT_LOG:-tiggit.log}"
 TIGGIT_LOG_PATH="${TIGGIT_LOG_PATH:-/var/log}"
-TIGGIT_MIRRORS_PATH="${TIGGIT_MIRRORS_PATH:-/var/db/tiggit}"
 TIGGIT_UPDATE_INTERVAL="${TIGGIT_UPDATE_INTERVAL:-900}"
 TIGGIT_USER="${TIGGIT_USER:-_tiggit}"
 
@@ -54,6 +55,7 @@ argc=0
 indent_level=0
 verbose=false
 daemon=false
+mirrors_path=""
 config_file="${TIGGIT_CONFIG_PATH}/${TIGGIT_CONFIG}"
 log_file="${TIGGIT_LOG_PATH}/${TIGGIT_LOG}"
 config_repos=()
@@ -130,7 +132,7 @@ function warning() {
 }
 
 function error() {
-  log error $1
+  log error "$1"
 }
 
 # print usage instructions (help)
@@ -207,6 +209,47 @@ function args_preprocess() {
 	argc=${#argv[@]}
 }
 
+# function all_mirrors_path() {
+function init_mirrors_path() {
+  local _os="$(uname -s)"
+
+  # TIGGIT_MIRRORS_PATH env var overrides defaults
+  if [ -n "$TIGGIT_MIRRORS_PATH" ]; then
+    mirrors_path="$TIGGIT_MIRRORS_PATH"
+  # when daemonized, use a system-level path
+  elif $daemon ; then
+    # macOS uses a special path for backwards compatibility with 0.1.x release
+    if [ "$_os" == "Darwin" ]; then
+      mirrors_path="/Library/GitMirrors"
+    else
+      mirrors_path="/var/db/tiggit"
+    fi
+  # otherwise use a user-local path
+  else
+    # macOS uses non-XDG paths
+    if [ "$_os" == "Darwin" ]; then
+      mirrors_path="${HOME}/Library/Application Support/com.makkintosshu.tiggit/GitMirrors"
+    # use XDG base dir for POSIX OSes: <https://specifications.freedesktop.org/basedir/latest>
+    elif [ -n "$XDG_DATA_HOME" ]; then
+      mirrors_path="${XDG_DATA_HOME}/tiggit"
+    else
+      mirrors_path="${HOME}/.local/share/tiggit"
+    fi
+  fi
+
+  # create the mirrors path, if missing
+  info "Using local mirrors path '${mirrors_path}'."
+  if ! [ -d "$mirrors_path" ]; then
+    warning "$(indent echo "Creating non-existant mirrors path '${mirrors_path}'...")"
+    if mkdir -p "$mirrors_path"; then
+      info "$(indent echo "Local mirrors path '${mirrors_path}' created successfully.")"
+    else
+      error "Failed to create local mirrors path '${mirrors_path}'! Exiting."
+      exit 1
+    fi
+  fi
+}
+
 # build a mirror path from a repo name/URL
 function repo_mirror_path() {
   local remote_repo="$1"
@@ -220,7 +263,7 @@ function repo_mirror_path() {
   fi
 
   if [ -n "${repo}" ]; then
-    echo "${TIGGIT_MIRRORS_PATH}/${group}/${repo}.git"
+    echo "${mirrors_path}/${group}/${repo}.git"
   fi
 }
 
@@ -258,7 +301,7 @@ function repo_mirror_create() {
 # fetch latest changes of specified git repo
 function repo_mirror_update() {
   local repo="$1"
-  local repo_path="${TIGGIT_MIRRORS_PATH}/${repo}.git"
+  local repo_path="${mirrors_path}/${repo}.git"
   local git_cmd=("indent" "git" "-C" "${repo_path}" "remote" "update")
 
   info "Updating '${repo}' in '${repo_path}'..."
@@ -280,7 +323,7 @@ function repo_mirrors_list() {
     if [[ "$(basename "${line}")" =~ ^(.+)\.git$ ]]; then
       echo "${BASH_REMATCH[1]}"
     fi
-  done <<< "$(find "${TIGGIT_MIRRORS_PATH}" -name "*.git" -mindepth 1 -maxdepth 1)"
+  done <<< "$(find "${mirrors_path}" -name "*.git" -mindepth 1 -maxdepth 1)"
 
   local group=""
   while IFS= read -r line; do
@@ -288,14 +331,14 @@ function repo_mirrors_list() {
       group="$(basename "$(dirname "$line")")"
       echo "${group}/${BASH_REMATCH[1]}"
     fi
-  done <<< "$(find "${TIGGIT_MIRRORS_PATH}" -name "*.git" -mindepth 2 -maxdepth 2)"
+  done <<< "$(find "${mirrors_path}" -name "*.git" -mindepth 2 -maxdepth 2)"
 }
 
 # fetch latest changes of all git repos
 function repo_mirror_update_all() {
   local success=true
 
-  info "Updating all repositories in '${TIGGIT_MIRRORS_PATH}'..."
+  info "Updating all repositories in '$mirrors_path}'..."
   while IFS= read -r line; do
     indent repo_mirror_update "$line"
     if [ $? -gt 0 ]; then success=false; fi
@@ -353,6 +396,8 @@ function daemonize() {
     error "ERROR! Not in daemon mode, so cannot daemonize! Exiting."
     exit 1
   fi
+
+  init_mirrors_path
 
   if ! config_load; then
     error "ERROR! Could not load repositories from config file! Exiting."
@@ -445,6 +490,8 @@ function main() {
 			esac
 		# handle arguments
 		else
+      init_mirrors_path
+
 			case "${argv[$i]}" in
 			  # commands
 			  "list")
