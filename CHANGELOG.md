@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * New tiggit icon derived from [tiger icon](doc/tiger/README.md).
 * Improved formatting of [`README.md`](README.md)
 
+### Fixed
+
+* Improved error message when `update` command is not prodided a repository
+    name (including suggesting using `update all`)
+
 ### Removed
 
 * Removed dependancy on ruby and ruby gems, especially
