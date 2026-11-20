@@ -304,6 +304,11 @@ function repo_mirror_update() {
   local repo_path="${mirrors_path}/${repo}.git"
   local git_cmd=("indent" "git" "-C" "${repo_path}" "remote" "update")
 
+  if [ -z "$repo" ]; then
+    error "Cannot update '${repo}' in '${mirrors_path}'! (Did you mean 'update all'?) Exiting."
+    exit 2
+  fi
+
   info "Updating '${repo}' in '${repo_path}'..."
   if ! $verbose; then
     "${git_cmd[@]}" >/dev/null
