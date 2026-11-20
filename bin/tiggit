@@ -156,7 +156,7 @@ function usage() {
 	echo '  TIGGIT_CONFIG_PATH    : path to configuration file (default: /etc)'
 	echo '  TIGGIT_LOG            : name of log file (default: tiggit.log)'
 	echo '  TIGGIT_LOG_PATH       : path to log file (default: /var/log)'
-	echo '  TIGGIT_MIRRORS_PATH   : path to mirrored repositories (default: /Library/GitMirrors)'
+	echo '  TIGGIT_MIRRORS_PATH   : path to mirrored repositories (e.g. /var/db/tiggit/ or /Library/GitMirrors)'
 	echo '  TIGGIT_UPDATE_INTERVAL: seconds between fetching updates to repositories (seconds; default: 900)'
 }
 
